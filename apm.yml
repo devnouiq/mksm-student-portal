@@ -1,0 +1,31 @@
+name: MKSM-Student-Portal
+version: 1.0.0
+description: APM project for MKSM Student Portal
+author: devnouiq
+
+# Which agent platforms to deploy to (uncomment to pin):
+targets:
+  - copilot
+  - claude
+
+dependencies:
+  apm:
+    - devnouiq/engineering-standards-skills#v1.0.1
+    - microsoft/apm-sample-package#v1.0.0
+    - mattpocock/skills#v1.1.0
+    - juliusbrussee/caveman#v1.9.1
+    - unitoneai/securityskills/skills/appsec/secure-code-review#70bc259
+    - unitoneai/securityskills/skills/appsec/owasp-top-10-web#70bc259
+    - unitoneai/securityskills/skills/appsec/api-security#70bc259
+    - unitoneai/securityskills/skills/appsec/dependency-scanning#70bc259
+    - unitoneai/securityskills/skills/appsec/threat-modeling#70bc259
+    - unitoneai/securityskills/skills/ai-security/llm-top-10#70bc259
+    - unitoneai/securityskills/skills/ai-security/prompt-injection#70bc259
+    - unitoneai/securityskills/skills/ai-security/agent-security#70bc259
+    - unitoneai/securityskills/skills/devsecops/secrets-management#70bc259
+    - unitoneai/securityskills/skills/devsecops/pipeline-security#70bc259
+    - unitoneai/securityskills/skills/devsecops/sast-config#70bc259
+  mcp: []
+
+includes: auto
+scripts: {}

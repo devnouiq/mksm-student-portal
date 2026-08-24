@@ -1,0 +1,85 @@
+{
+  "project": "MKSM Student Portal",
+  "source_of_truth": "docs/MKSM_Portal_Feature_PRD.md",
+  "current_milestone": "M1 — Full UI / Clickable Prototype (all 3 personas)",
+  "stack": {
+    "framework": "Next.js 16 (App Router, RSC)",
+    "language": "TypeScript",
+    "styling": "Tailwind v4",
+    "icons": "@phosphor-icons/react",
+    "data": "mock repositories behind interfaces (frontend/src/data), swap point at frontend/src/data/index.ts",
+    "package_manager": "npm"
+  },
+  "verification": {
+    "command": "./init.sh",
+    "checks": [
+      "npm --prefix frontend install",
+      "npm --prefix frontend test (vitest — 22 unit tests)",
+      "npm --prefix frontend run build (types + lint + prerender all 35 routes)"
+    ],
+    "last_result": "PASS — 22/22 unit tests green; 35 routes prerendered, no type/lint errors"
+  },
+  "engineering_gates": {
+    "workflow": "Followed .agents/skills/engineering-workflow on 2026-08-24.",
+    "tdd": "DONE — vitest suite; isLateSubmission (homework ≥2-day cutoff, PRD §8.7) extracted to src/domain/homework.ts and covered incl. boundary/past/invalid; navForRole RBAC isolation (PRD §7); toPercent/initials formatters. 22 tests.",
+    "solid": "DONE — homework rule extracted as pure, framework-free, now-injected domain fn; screens depend only on repository interfaces.",
+    "secure_by_default": "DONE — scanned diff + app: no XSS sinks (no dangerouslySetInnerHTML/eval/innerHTML), no committed secrets/.env, no unsafe external links, iframe has referrerPolicy + scoped allow. Two M2 risks recorded: (1) replace prototype any-password/client-route auth with server-side auth+RBAC; (2) allow-list admin-editable Voices YouTube URL before iframe render.",
+    "production_readiness": "PARTIAL/WAIVED for M1 — this is a mock-data prototype with no backend, so runtime gates (structured logging+correlation ids, metrics, timeouts/retries, health endpoint, migrations, rollback) are N/A until M2 and waived with that reason. Applicable-now gaps deferred to M2: per-route error.tsx/loading.tsx (mock cannot fail yet; only student/overview has loading.tsx), startup validation of MKSM_MOCK_LATENCY_MS.",
+    "code_review": "DONE — self-review of the diff; refactor preserves behaviour, build+tests green."
+  },
+  "notes": [
+    "M1 is frontend-only: mock data, no backend, no real auth (auth is M2).",
+    "Every screen fetches through getRepositories(); swapping mock->API needs no screen changes.",
+    "Scope guardrails (PRD §7/§9): subscriptions read-only, Zoom static links, no payment processing, no Reports/Q&A/Reschedule/Request-Homework.",
+    "Interactive prototype behaviours (form submits, mark-read, feedback, filters) hold state locally only — they are wired to real endpoints in M2–M4."
+  ],
+  "features": [
+    {
+      "id": "foundation",
+      "title": "Foundation — design system, data layer, app shell, routing",
+      "role": "shared",
+      "status": "done",
+      "evidence": "frontend/src/app/globals.css (tokens), frontend/src/data/* (repository seam + view models for every screen), frontend/src/components/{ui,layout,domain}/*, role layouts. Build passes."
+    },
+    {
+      "id": "auth-login",
+      "title": "Login screen (MKSM no./email + password, keep-signed-in, forgot, support) + role entry",
+      "role": "shared",
+      "status": "done",
+      "evidence": "frontend/src/app/login/{page,sign-in-form}.tsx. Prototype sign-in routes each demo identity (100428/500112/900001) to its role Overview; role shortcut buttons also present."
+    },
+
+    { "id": "student-overview", "title": "Student Overview", "role": "student", "status": "done", "evidence": "frontend/src/app/student/overview/page.tsx + loading.tsx. StudentRepository.getOverview()." },
+    { "id": "student-courses", "title": "My Courses (progress, attendance, Join/Continue, Homework, Request Recording; Practice tab)", "role": "student", "status": "done", "evidence": "frontend/src/app/student/courses/page.tsx. getCourses() + getPracticeMaterial()." },
+    { "id": "student-practice", "title": "Practice Material (Audio by pitch / Video / PDF tabs)", "role": "student", "status": "done", "evidence": "frontend/src/app/student/practice/page.tsx. getPracticeMaterial()." },
+    { "id": "student-homework", "title": "Submit Homework (class-date, ≥2-day cutoff, Late tag, upload) + Check Feedback", "role": "student", "status": "done", "evidence": "frontend/src/app/student/homework/{page,homework-submit-form}.tsx. getHomework()." },
+    { "id": "student-sankalp", "title": "Sankalp Leaderboard (Top Students / Batches / 600 Hours Club)", "role": "student", "status": "done", "evidence": "frontend/src/app/student/sankalp/page.tsx. leaderboard.getLeaderboard()." },
+    { "id": "student-payments", "title": "Payment & Fees (read-only status, re-activate, change method)", "role": "student", "status": "done", "evidence": "frontend/src/app/student/payments/page.tsx. getPayments()." },
+    { "id": "student-explore", "title": "Explore Other Courses (Enroll / Learn More)", "role": "student", "status": "done", "evidence": "frontend/src/app/student/explore/page.tsx. getCatalog()." },
+    { "id": "student-calendar", "title": "Holiday Calendar 2026", "role": "student", "status": "done", "evidence": "frontend/src/app/student/calendar/page.tsx. getHolidays()." },
+    { "id": "student-help", "title": "Help Section (Tutorials / FAQs / Support)", "role": "student", "status": "done", "evidence": "frontend/src/app/student/help/page.tsx. getHelp()." },
+    { "id": "student-policy", "title": "MKSM Policy (static)", "role": "student", "status": "done", "evidence": "frontend/src/app/student/policy/page.tsx. Placeholder policy text per PRD §12.11." },
+
+    { "id": "teacher-overview", "title": "Teacher Overview (announcements, homework/class stats, DEA alerts, class-log reminder, Sankalp)", "role": "teacher", "status": "done", "evidence": "frontend/src/app/teacher/overview/page.tsx. teacher.getOverview()." },
+    { "id": "teacher-batches", "title": "Classes / My Batches (Start Class / Homework / Attendance)", "role": "teacher", "status": "done", "evidence": "frontend/src/app/teacher/batches/page.tsx. getBatches()." },
+    { "id": "teacher-homework", "title": "Check Homework (filters, audio player, Give Feedback)", "role": "teacher", "status": "done", "evidence": "frontend/src/app/teacher/homework/{page,homework-queue}.tsx. getHomeworkQueue()." },
+    { "id": "teacher-practice", "title": "Practice Material (admin-shared + own uploads, share to batch)", "role": "teacher", "status": "done", "evidence": "frontend/src/app/teacher/practice/page.tsx. getPracticeMaterial()." },
+    { "id": "teacher-schedule", "title": "Class Schedule (read-only)", "role": "teacher", "status": "done", "evidence": "frontend/src/app/teacher/schedule/page.tsx. getSchedule()." },
+    { "id": "teacher-attendance", "title": "Attendance (auto Present Online + review/adjust)", "role": "teacher", "status": "done", "evidence": "frontend/src/app/teacher/attendance/{page,attendance-table}.tsx. getAttendance()." },
+    { "id": "teacher-class-log", "title": "Class Log (submit form + history)", "role": "teacher", "status": "done", "evidence": "frontend/src/app/teacher/class-log/{page,class-log-form}.tsx. getClassLog()." },
+    { "id": "teacher-sankalp", "title": "Sankalp Leaderboard (teacher view)", "role": "teacher", "status": "done", "evidence": "frontend/src/app/teacher/sankalp/page.tsx. leaderboard.getLeaderboard()." },
+    { "id": "teacher-announcements", "title": "Announcements (unread, mark-all-read)", "role": "teacher", "status": "done", "evidence": "frontend/src/app/teacher/announcements/page.tsx. getAnnouncements()." },
+
+    { "id": "admin-overview", "title": "Admin Overview (announcements, Razorpay/PayPal breakdown, Sankalp, batch mgmt)", "role": "admin", "status": "done", "evidence": "frontend/src/app/admin/overview/page.tsx. admin.getOverview()." },
+    { "id": "admin-batches", "title": "Manage Classes / Batches (students, Zoom, change teacher)", "role": "admin", "status": "done", "evidence": "frontend/src/app/admin/batches/page.tsx. getBatches()." },
+    { "id": "admin-students", "title": "Active Students directory (searchable)", "role": "admin", "status": "done", "evidence": "frontend/src/app/admin/students/{page,student-directory}.tsx. getStudents()." },
+    { "id": "admin-practice", "title": "Practice Material master library (upload / share)", "role": "admin", "status": "done", "evidence": "frontend/src/app/admin/practice/page.tsx. getPracticeLibrary()." },
+    { "id": "admin-class-log", "title": "Class Log (all logs, filter by teacher/batch, edit)", "role": "admin", "status": "done", "evidence": "frontend/src/app/admin/class-log/{page,class-log-table}.tsx. getClassLogs()." },
+    { "id": "admin-add-student", "title": "Add Student form", "role": "admin", "status": "done", "evidence": "frontend/src/app/admin/add-student/{page,add-student-form}.tsx. getFormOptions()." },
+    { "id": "admin-add-teacher", "title": "Add Teacher form", "role": "admin", "status": "done", "evidence": "frontend/src/app/admin/add-teacher/{page,add-teacher-form}.tsx. getFormOptions()." },
+    { "id": "admin-manage-batches", "title": "Add / Manage Batches (form + list, static Zoom link)", "role": "admin", "status": "done", "evidence": "frontend/src/app/admin/manage-batches/{page,batch-form}.tsx. getBatches() + getFormOptions()." },
+    { "id": "admin-subscriptions", "title": "Manage Subscription (read-only sync, filters, payment counts)", "role": "admin", "status": "done", "evidence": "frontend/src/app/admin/subscriptions/{page,subscriptions-table}.tsx. getSubscriptions()." },
+    { "id": "admin-whatsapp", "title": "Manage WhatsApp (connection + templates)", "role": "admin", "status": "done", "evidence": "frontend/src/app/admin/whatsapp/page.tsx. Static config screen per PRD §12.7." },
+    { "id": "admin-announcements", "title": "Announcements (create + share audience, manage/remove)", "role": "admin", "status": "done", "evidence": "frontend/src/app/admin/announcements/{page,announcement-form,manage-list}.tsx. getAnnouncements() + getFormOptions()." }
+  ]
+}

@@ -16,7 +16,7 @@ export function AddStudentForm({ batches }: { batches: string[] }) {
     return (
       <SubmittedNotice title="Student added">
         The student has been onboarded and assigned to their batch. A welcome
-        email would be sent once the backend is live (Milestone 2).
+        email with sign-in details is sent to the student.
         <div className="mt-3">
           <Button variant="outline" size="sm" onClick={() => setSubmitted(false)}>
             Add another student

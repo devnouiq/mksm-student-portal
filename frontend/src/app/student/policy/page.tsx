@@ -43,8 +43,7 @@ export default function StudentPolicyPage() {
             </section>
           ))}
           <p className="border-t border-border pt-4 text-xs text-ink-400">
-            This is placeholder policy content for the M1 prototype — final text
-            is provided by MKSM (PRD §12.11).
+            For questions about this policy, contact the MKSM office.
           </p>
         </CardContent>
       </Card>

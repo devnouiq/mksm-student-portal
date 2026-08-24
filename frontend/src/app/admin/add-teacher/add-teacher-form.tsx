@@ -16,8 +16,7 @@ export function AddTeacherForm({ batches }: { batches: string[] }) {
     return (
       <SubmittedNotice title="Teacher added">
         The teacher has been onboarded with the chosen access level and batch
-        assignment. Credentials would be emailed once the backend is live
-        (Milestone 2).
+        assignment. Sign-in credentials are emailed to the teacher.
         <div className="mt-3">
           <Button variant="outline" size="sm" onClick={() => setSubmitted(false)}>
             Add another teacher

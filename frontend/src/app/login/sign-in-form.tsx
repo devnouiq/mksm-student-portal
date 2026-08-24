@@ -110,12 +110,6 @@ export function SignInForm() {
         <Button type="submit" className="w-full">
           Sign in
         </Button>
-
-        <div className="rounded-md border border-dashed border-ink-200 bg-surface-muted px-3 py-2 text-xs text-muted-foreground">
-          <span className="font-medium text-ink-700">Prototype logins</span> —
-          any password works: <b>100428</b> Student · <b>500112</b> Teacher ·{" "}
-          <b>900001</b> Admin. Real auth arrives in Milestone 2.
-        </div>
       </form>
 
       <div className="my-6 flex items-center gap-3 text-xs text-ink-400">

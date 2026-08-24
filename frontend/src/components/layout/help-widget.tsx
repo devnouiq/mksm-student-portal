@@ -21,7 +21,7 @@ export function HelpWidget() {
               Hi there! How can we help?
             </p>
             <p className="text-xs text-brand-100">
-              Support chat arrives in a later milestone.
+              We usually reply within a few hours.
             </p>
           </div>
           <div className="space-y-2 px-4 py-3 text-sm text-muted-foreground">

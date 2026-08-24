@@ -172,8 +172,8 @@ export default async function StudentOverviewPage() {
                   </span>
                 </p>
               </div>
-              <Button variant="ghost" size="sm" className="mt-3 w-full" disabled>
-                Log hours (Milestone 4)
+              <Button variant="ghost" size="sm" className="mt-3 w-full">
+                Log hours
               </Button>
             </CardContent>
           </Card>

@@ -25,6 +25,26 @@ dependencies:
     - unitoneai/securityskills/skills/devsecops/secrets-management#70bc259
     - unitoneai/securityskills/skills/devsecops/pipeline-security#70bc259
     - unitoneai/securityskills/skills/devsecops/sast-config#70bc259
+    - Leonxlnx/taste-skill
+    - anthropics/skills
+    - greensock/gsap-skills
+    - ibelick/ui-skills
+    - nextlevelbuilder/ui-ux-pro-max-skill
+    - raintree-technology/apple-hig-skills
+    - emilkowalski/skills
+    - vercel-labs/agent-browser
+    - ehmo/platform-design-skills
+    - pbakaus/impeccable
+    - wholiver/swiftui-design-skill
+    - CloudAI-X/threejs-skills
+    - openai/skills/skills/.curated/figma
+    - openai/skills/skills/.curated/figma-use
+    - openai/skills/skills/.curated/figma-generate-design
+    - openai/skills/skills/.curated/figma-generate-library
+    - openai/skills/skills/.curated/figma-implement-design
+    - openai/skills/skills/.curated/figma-create-new-file
+    - openai/skills/skills/.curated/figma-create-design-system-rules
+    - openai/skills/skills/.curated/figma-code-connect-components
   mcp: []
 
 includes: auto

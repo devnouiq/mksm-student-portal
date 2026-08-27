@@ -51,6 +51,7 @@ export interface StudentRepository {
   getCatalog(mksmNo: string): Promise<CatalogCourse[]>;
   getHolidays(): Promise<Holiday[]>;
   getHelp(): Promise<HelpView>;
+  getAnnouncements(mksmNo: string): Promise<Announcement[]>;
 }
 
 export interface TeacherRepository {

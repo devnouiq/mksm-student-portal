@@ -3,11 +3,22 @@
 import { useMemo, useState } from "react";
 import type { ClassLogEntry } from "@/data/types";
 import { formatDate } from "@/lib/format";
+import type { CsvColumn } from "@/lib/csv";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Notebook } from "@phosphor-icons/react";
 import { Table, TableWrap, TH, THead, TR, TD } from "@/components/ui/table";
+import { DownloadCsvButton } from "@/components/domain/download-csv-button";
+
+const csvColumns: CsvColumn<ClassLogEntry>[] = [
+  { header: "Date", value: (l) => formatDate(l.classDate) },
+  { header: "Teacher", value: (l) => l.teacherName },
+  { header: "Batch", value: (l) => l.batchName },
+  { header: "Raga", value: (l) => l.ragaCovered },
+  { header: "What was covered", value: (l) => l.whatCovered },
+  { header: "Comments", value: (l) => l.comments },
+];
 
 export function AdminClassLogTable({ logs }: { logs: ClassLogEntry[] }) {
   const [teacher, setTeacher] = useState("all");
@@ -54,6 +65,13 @@ export function AdminClassLogTable({ logs }: { logs: ClassLogEntry[] }) {
               </option>
             ))}
           </Select>
+        </div>
+        <div className="sm:ml-auto">
+          <DownloadCsvButton
+            rows={filtered}
+            columns={csvColumns}
+            filename="class-logs.csv"
+          />
         </div>
       </div>
 

@@ -42,6 +42,7 @@ const student: NavItem[] = [
   { label: "Practice Material", href: "/student/practice", icon: MusicNotes },
   { label: "Submit Homework", href: "/student/homework", icon: UploadSimple },
   { label: "Sankalp Leaderboard", href: "/student/sankalp", icon: Trophy },
+  { label: "Announcements", href: "/student/announcements", icon: Megaphone },
   { label: "Payment & Fees", href: "/student/payments", icon: CreditCard },
   { label: "Explore Courses", href: "/student/explore", icon: Compass },
   { label: "Holiday Calendar", href: "/student/calendar", icon: CalendarBlank },

@@ -126,7 +126,25 @@
   animation: mksm-shimmer 1.4s ease-in-out infinite;
 }
 
+/* Right-to-left alert marquee on the student overview */
+@keyframes mksm-marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.mksm-marquee-track {
+  display: inline-flex;
+  white-space: nowrap;
+  will-change: transform;
+  animation: mksm-marquee 32s linear infinite;
+}
+
+.mksm-marquee:hover .mksm-marquee-track {
+  animation-play-state: paused;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .mksm-skeleton { animation: none; }
+  .mksm-marquee-track { animation: none; }
   * { scroll-behavior: auto !important; }
 }

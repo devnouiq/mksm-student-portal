@@ -1,12 +1,17 @@
 import type { Metadata } from "next";
 import { getRepositories } from "@/data";
 import type { HolidayKind } from "@/data/types";
+import { ArrowSquareOut } from "@phosphor-icons/react/dist/ssr";
 import { formatDate } from "@/lib/format";
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
+import { ButtonLink } from "@/components/ui/button";
 import { Table, TableWrap, TH, THead, TR, TD } from "@/components/ui/table";
 
 export const metadata: Metadata = { title: "Holiday Calendar" };
+
+const HOLIDAY_CALENDAR_URL =
+  "https://docs.google.com/spreadsheets/d/1ortMn72O-HeY_nBr9TOl8FEygl2mHedhfoEjdqTCeS4";
 
 const kindTone: Record<HolidayKind, "brand" | "info" | "neutral"> = {
   festival: "brand",
@@ -31,6 +36,17 @@ export default async function StudentCalendarPage() {
       <PageHeader
         title="Holiday Calendar"
         description="Days the school is closed in 2026. No classes are scheduled on these dates."
+        actions={
+          <ButtonLink
+            href={HOLIDAY_CALENDAR_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            variant="outline"
+            size="sm"
+          >
+            <ArrowSquareOut size={16} /> Full calendar
+          </ButtonLink>
+        }
       />
 
       <TableWrap>

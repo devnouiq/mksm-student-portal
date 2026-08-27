@@ -64,6 +64,7 @@ export interface EnrolledCourse {
   progress: number; // 0..1
   nextClassAt: string | null; // ISO; null when no upcoming class
   isClassDay: boolean; // gates "Join Now" (PRD §5.1 My Courses)
+  ongoing?: boolean; // weekly class with no fixed end — always shown at 100%
 }
 
 export interface SubscriptionSummary {
@@ -77,9 +78,14 @@ export interface SubscriptionSummary {
 export interface SankalpSummary {
   mksmNo: string;
   personalHours: number;
+  weeklyHours: number; // hours submitted this week
+  nextMilestoneHours: number; // the goal the student is working toward
   schoolAchievedHours: number;
   schoolTargetHours: number;
 }
+
+/** Who an announcement is posted as — drives where it surfaces for students. */
+export type AnnouncementSource = "admin" | "mahesh-kale" | "community";
 
 export interface Announcement {
   id: string;
@@ -87,6 +93,22 @@ export interface Announcement {
   body: string;
   postedAt: string; // ISO
   read: boolean;
+  source?: AnnouncementSource; // defaults to "admin"
+  important?: boolean; // also scrolls in the student overview marquee
+  audienceLabel?: string; // e.g. "All Intermediate Students" — display only
+}
+
+/** A message from Mahesh Kale Sir, targeted to students by level or geography. */
+export type MkMessageKind = "video" | "audio" | "text";
+
+export interface MkMessage {
+  id: string;
+  kind: MkMessageKind;
+  title: string;
+  body: string; // text content, or a caption for media
+  mediaUrl: string | null; // YouTube embed (video) or audio source; null for text
+  postedAt: string; // ISO
+  audienceLabel: string; // e.g. "All Intermediate Students"
 }
 
 /** Admin-managed embedded YouTube link, swapped monthly (PRD §5.1, §8.5). */
@@ -104,6 +126,8 @@ export interface StudentOverview {
   sankalp: SankalpSummary;
   voices: VoicesOfMksm;
   announcements: Announcement[];
+  mkMessage: MkMessage | null;
+  alerts: string[]; // important notices scrolling in the top marquee
 }
 
 /* ------------------------------------------------------------------ *

@@ -3,6 +3,7 @@ import Link from "next/link";
 import {
   ArrowRight,
   CalendarBlank,
+  UserSound,
   VideoCamera,
 } from "@phosphor-icons/react/dist/ssr";
 import { getRepositories } from "@/data";
@@ -12,6 +13,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { SubscriptionBadge } from "@/components/domain/subscription-badge";
+import { AlertMarquee } from "@/components/domain/alert-marquee";
+import { MessageFromMk } from "@/components/domain/message-from-mk";
 
 export const metadata: Metadata = { title: "Overview" };
 
@@ -25,9 +28,15 @@ export default async function StudentOverviewPage() {
   const data = await repos.student.getOverview(user.mksmNo);
 
   const schoolPct = data.sankalp.schoolAchievedHours / data.sankalp.schoolTargetHours;
+  const hoursToMilestone = Math.max(
+    0,
+    Math.ceil(data.sankalp.nextMilestoneHours - data.sankalp.personalHours),
+  );
 
   return (
     <>
+      <AlertMarquee alerts={data.alerts} />
+
       <PageHeader
         title={`Namaste, ${firstName(data.student.name)}`}
         description="Here's your practice, courses and Sankalp at a glance."
@@ -76,7 +85,10 @@ export default async function StudentOverviewPage() {
               </Link>
             </CardHeader>
             <CardContent className="space-y-3">
-              {data.courses.map((course) => (
+              {data.courses.map((course) => {
+                // Ongoing weekly classes have no fixed end — always shown full.
+                const progress = course.ongoing ? 1 : course.progress;
+                return (
                 <div
                   key={course.courseId}
                   className="flex flex-col gap-3 rounded-md border border-border p-4 sm:flex-row sm:items-center sm:justify-between"
@@ -88,12 +100,12 @@ export default async function StudentOverviewPage() {
                     </p>
                     <div className="mt-2 flex items-center gap-3">
                       <Progress
-                        value={course.progress}
+                        value={progress}
                         className="max-w-40"
                         label={`${course.courseName} progress`}
                       />
                       <span className="text-xs font-medium text-ink-500">
-                        {toPercent(course.progress)}%
+                        {toPercent(progress)}%
                       </span>
                     </div>
                   </div>
@@ -113,9 +125,25 @@ export default async function StudentOverviewPage() {
                     )}
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </CardContent>
           </Card>
+
+          {/* Message from MK — video/audio/text from Mahesh Kale Sir */}
+          {data.mkMessage ? (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <UserSound size={18} weight="duotone" className="text-brand-600" />
+                  Message from MK
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <MessageFromMk message={data.mkMessage} />
+              </CardContent>
+            </Card>
+          ) : null}
 
           {/* Voices of MKSM — admin-swapped monthly embed (PRD §5.1) */}
           <Card>
@@ -164,14 +192,26 @@ export default async function StudentOverviewPage() {
               <p className="mt-2 text-sm text-muted-foreground">
                 {toPercent(schoolPct)}% of the school-wide pledge achieved.
               </p>
-              <div className="mt-4 rounded-md bg-saffron-100 p-3">
-                <p className="text-sm text-ink-700">
-                  Your contribution:{" "}
-                  <span className="font-semibold text-saffron-700">
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                <div className="rounded-md bg-saffron-100 p-3">
+                  <p className="text-xs text-ink-500">This week</p>
+                  <p className="font-semibold text-saffron-700">
+                    {formatHours(data.sankalp.weeklyHours)} hrs
+                  </p>
+                </div>
+                <div className="rounded-md bg-saffron-100 p-3">
+                  <p className="text-xs text-ink-500">Your total</p>
+                  <p className="font-semibold text-saffron-700">
                     {formatHours(data.sankalp.personalHours)} hrs
-                  </span>
-                </p>
+                  </p>
+                </div>
               </div>
+              {hoursToMilestone > 0 ? (
+                <p className="mt-3 rounded-md bg-brand-50 p-3 text-sm text-brand-800">
+                  {formatHours(hoursToMilestone)} hours away from reaching your{" "}
+                  {formatHours(data.sankalp.nextMilestoneHours)} hour goal.
+                </p>
+              ) : null}
               <Button variant="ghost" size="sm" className="mt-3 w-full">
                 Log hours
               </Button>
@@ -205,6 +245,14 @@ export default async function StudentOverviewPage() {
                   </div>
                 </div>
               ))}
+              <ButtonLink
+                href="/student/announcements"
+                variant="outline"
+                size="sm"
+                className="w-full"
+              >
+                Open Announcements
+              </ButtonLink>
             </CardContent>
           </Card>
         </div>

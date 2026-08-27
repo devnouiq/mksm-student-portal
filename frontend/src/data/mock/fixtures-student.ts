@@ -23,6 +23,7 @@ export const studentCourseDetails: CourseDetail[] = [
     progress: 0.62,
     nextClassAt: inDays(0),
     isClassDay: true,
+    ongoing: true,
     day: "Monday",
     time: "6:00 PM IST",
     pitch: "C#",

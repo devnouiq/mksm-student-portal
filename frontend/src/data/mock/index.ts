@@ -18,6 +18,7 @@ import {
   demoUsers,
   studentAnnouncements,
   studentCourses,
+  studentMkMessage,
   studentSankalp,
   studentSubscription,
   voicesOfMksm,
@@ -71,13 +72,20 @@ const sessionRepository: SessionRepository = {
 const studentRepository: StudentRepository = {
   getOverview(mksmNo: string): Promise<StudentOverview> {
     const student = demoUsers.student;
+    // Announcements posted as Admin / MKSM Community show in the Announcements
+    // widget; those flagged important also scroll in the top marquee.
+    const announcements = studentAnnouncements.filter(
+      (a) => (a.source ?? "admin") !== "mahesh-kale",
+    );
     return settle<StudentOverview>({
       student: { ...student, mksmNo },
       subscription: studentSubscription,
       courses: studentCourses,
       sankalp: { ...studentSankalp, mksmNo },
       voices: voicesOfMksm,
-      announcements: studentAnnouncements,
+      announcements,
+      mkMessage: studentMkMessage,
+      alerts: announcements.filter((a) => a.important).map((a) => a.title),
     });
   },
   getCourses() {
@@ -104,6 +112,11 @@ const studentRepository: StudentRepository = {
   },
   getHelp() {
     return settle(helpContent);
+  },
+  getAnnouncements() {
+    return settle(
+      studentAnnouncements.filter((a) => (a.source ?? "admin") !== "mahesh-kale"),
+    );
   },
 };
 

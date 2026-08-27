@@ -4,17 +4,36 @@ import { useMemo, useState } from "react";
 import { MagnifyingGlass } from "@phosphor-icons/react";
 import type { SubscriptionRow } from "@/data/types";
 import { formatDate } from "@/lib/format";
+import type { CsvColumn } from "@/lib/csv";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Table, TableWrap, TH, THead, TR, TD } from "@/components/ui/table";
 import { SubscriptionBadge } from "@/components/domain/subscription-badge";
+import { DownloadCsvButton } from "@/components/domain/download-csv-button";
 
 const providerName: Record<string, string> = {
   razorpay: "Razorpay",
   paypal: "PayPal",
   "one-time": "One-time",
 };
+
+const csvColumns: CsvColumn<SubscriptionRow>[] = [
+  { header: "MKSM No.", value: (r) => r.mksmNo },
+  { header: "Student", value: (r) => r.studentName },
+  { header: "Email", value: (r) => r.email },
+  { header: "Batch", value: (r) => r.batchName },
+  { header: "Country", value: (r) => r.country },
+  { header: "Provider", value: (r) => providerName[r.provider] },
+  { header: "Sub. ID", value: (r) => r.subId },
+  { header: "Status", value: (r) => r.status },
+  { header: "Paid cycle", value: (r) => r.paidCycle },
+  { header: "Active cycle", value: (r) => r.activeCycle },
+  { header: "Start", value: (r) => formatDate(r.startDate) },
+  { header: "Next due", value: (r) => (r.nextDue ? formatDate(r.nextDue) : "") },
+  { header: "Paid this year", value: (r) => r.paymentsThisYear },
+  { header: "Paid last 3 months", value: (r) => r.paymentsLast3Months },
+];
 
 export function SubscriptionsTable({ rows }: { rows: SubscriptionRow[] }) {
   const [provider, setProvider] = useState("all");
@@ -74,6 +93,11 @@ export function SubscriptionsTable({ rows }: { rows: SubscriptionRow[] }) {
             ))}
           </Select>
         </div>
+        <DownloadCsvButton
+          rows={filtered}
+          columns={csvColumns}
+          filename="subscriptions.csv"
+        />
       </div>
 
       {filtered.length === 0 ? (

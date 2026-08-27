@@ -7,6 +7,7 @@
 import type {
   Announcement,
   EnrolledCourse,
+  MkMessage,
   SankalpSummary,
   SubscriptionSummary,
   UserProfile,
@@ -48,6 +49,7 @@ export const studentCourses: EnrolledCourse[] = [
     progress: 0.62,
     nextClassAt: inDays(0), // today → class day
     isClassDay: true,
+    ongoing: true, // weekly batch class, no fixed end — shown at 100%
   },
   {
     courseId: "c-light-music",
@@ -79,15 +81,27 @@ export const studentSubscription: SubscriptionSummary = {
 export const studentSankalp: SankalpSummary = {
   mksmNo: "100428",
   personalHours: 214.5,
+  weeklyHours: 6.5,
+  nextMilestoneHours: 300,
   schoolAchievedHours: 30000,
   schoolTargetHours: 50000,
 };
 
 export const voicesOfMksm: VoicesOfMksm = {
-  // Admin-swapped monthly embed (PRD §8.5). Sample link for the prototype.
-  youtubeUrl: "https://www.youtube.com/embed/oHg5SJYRHA0",
+  // Admin-swapped monthly embed (PRD §8.5).
+  youtubeUrl: "https://www.youtube.com/embed/OMUeE5F_jSs",
   title: "Voices of MKSM — Monthly Showcase",
   month: "August 2026",
+};
+
+export const studentMkMessage: MkMessage = {
+  id: "mk-1",
+  kind: "video",
+  title: "A note on riyaz before the festival season",
+  body: "Keep your morning alankars steady this month — consistency over intensity.",
+  mediaUrl: "https://www.youtube.com/embed/OMUeE5F_jSs",
+  postedAt: inDays(-2, 8),
+  audienceLabel: "All Intermediate Students",
 };
 
 export const studentAnnouncements: Announcement[] = [
@@ -97,6 +111,9 @@ export const studentAnnouncements: Announcement[] = [
     body: "A special masterclass is scheduled this Sunday. Details in Class Schedule.",
     postedAt: inDays(-1, 9),
     read: false,
+    source: "admin",
+    important: true,
+    audienceLabel: "All Students",
   },
   {
     id: "a-2",
@@ -104,6 +121,8 @@ export const studentAnnouncements: Announcement[] = [
     body: "Fresh alankar audio (C#, G#, B#) is now available under Practice Material.",
     postedAt: inDays(-3, 11),
     read: false,
+    source: "community",
+    audienceLabel: "All Students",
   },
   {
     id: "a-3",
@@ -111,5 +130,8 @@ export const studentAnnouncements: Announcement[] = [
     body: "The school will be closed on 15 August for Independence Day.",
     postedAt: inDays(-6, 10),
     read: true,
+    source: "admin",
+    important: true,
+    audienceLabel: "All Students",
   },
 ];

@@ -14,6 +14,7 @@ dependencies:
     - microsoft/apm-sample-package#v1.0.0
     - mattpocock/skills#v1.1.0
     - juliusbrussee/caveman#v1.9.1
+    - saurabhkumar8112/cyclomatic-complexity-skill/skills/cyclomatic-complexity
     - unitoneai/securityskills/skills/appsec/secure-code-review#70bc259
     - unitoneai/securityskills/skills/appsec/owasp-top-10-web#70bc259
     - unitoneai/securityskills/skills/appsec/api-security#70bc259

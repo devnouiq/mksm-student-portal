@@ -1,5 +1,5 @@
 lockfile_version: '1'
-generated_at: '2026-08-27T08:07:49.304338+00:00'
+generated_at: '2026-08-28T04:29:50.898884+00:00'
 apm_version: 0.28.0
 dependencies:
 - repo_url: anthropics/skills
@@ -2009,6 +2009,10 @@ dependencies:
   - .claude/skills/emil-design-eng/SKILL.md
   - .claude/skills/find-animation-opportunities
   - .claude/skills/find-animation-opportunities/SKILL.md
+  - .claude/skills/improve-animations
+  - .claude/skills/improve-animations/AUDIT.md
+  - .claude/skills/improve-animations/PLAN-TEMPLATE.md
+  - .claude/skills/improve-animations/SKILL.md
   - .claude/skills/pick-ui-library
   - .claude/skills/pick-ui-library/SKILL.md
   - .claude/skills/prototype/PICKER.md
@@ -2045,6 +2049,9 @@ dependencies:
     .claude/skills/ask-sonner/SKILL.md: sha256:be1b04511aadb4d7d81aa8cd2b55c260a626aae534983bc8ae3fbe26bbf48632
     .claude/skills/emil-design-eng/SKILL.md: sha256:e71de849347050c2c573c1cf24d742d5a13459557ecffa6e562f08006f46b5b7
     .claude/skills/find-animation-opportunities/SKILL.md: sha256:91c1243164057fbf824088d12faea937878a757a7ac653e8288b775e8b27b882
+    .claude/skills/improve-animations/AUDIT.md: sha256:551c8473e20e5f4774680bc24d45e1c68e50992582720905c6b077756b7b5a55
+    .claude/skills/improve-animations/PLAN-TEMPLATE.md: sha256:0a08ac8e23fd2082d7ffb86aeed7b789de77328c3cf874b16f1a755f2ef0a6ad
+    .claude/skills/improve-animations/SKILL.md: sha256:68f17bbc4671593d2f43dba26a679243e2153ba5f26965fb7d59df52842534ff
     .claude/skills/pick-ui-library/SKILL.md: sha256:4b889bd6c08358499ac4a7202b8af71ffbd3485d2468f7b09d0613bbe7b24bf4
     .claude/skills/review-animations/SKILL.md: sha256:61cf8ac0c4c8e1f63385298c546b16c65ca9aec34abddcd04e821c16712d671d
     .claude/skills/review-animations/STANDARDS.md: sha256:e7d3605034acda54ca13e43aec9e64d65b53de20f75b11b8d694e373012fbe07
@@ -2424,8 +2431,10 @@ dependencies:
   - .claude/skills/stitch-skill
   - .claude/skills/stitch-skill/DESIGN.md
   - .claude/skills/stitch-skill/SKILL.md
+  - .claude/skills/taste-skill
   - .claude/skills/taste-skill-v1
   - .claude/skills/taste-skill-v1/SKILL.md
+  - .claude/skills/taste-skill/SKILL.md
   deployed_file_hashes:
     .agents/skills/brandkit/SKILL.md: sha256:b0c4837e1bd140ca816ae54948754ddd2ac1e2a4d3619363777a80caf00b2ede
     .agents/skills/brutalist-skill/SKILL.md: sha256:fffbaac8597f07679e9d87145533567658aedba3b5eca6f16a7075a333048caa
@@ -2454,6 +2463,7 @@ dependencies:
     .claude/skills/stitch-skill/DESIGN.md: sha256:0ab6740c4ebb1966dbceddb823a66d4bf027e960efbd73faca56cbf8370ae2ad
     .claude/skills/stitch-skill/SKILL.md: sha256:46bdb08fee2dded38b6ba0a051230a502d6ac6e4044afd47592cb40c256028b5
     .claude/skills/taste-skill-v1/SKILL.md: sha256:033d45af1ed23832730642f95f40ab49db7fb5222848489a6c5656144bfc6dae
+    .claude/skills/taste-skill/SKILL.md: sha256:aa194351b246b8b4799099d4ed7b033d29eab6e6e3d58d8d2172978be7b3ec89
   content_hash: sha256:1b69742e9409feeb340ef9d61671e84ae266631b98b27143928b84b926d8e091
   declared_license: MIT
 - repo_url: mattpocock/skills
@@ -5568,6 +5578,23 @@ dependencies:
     .claude/skills/hig-technologies/references/voiceover.md: sha256:54fa34da1b05eded813f7755c012413665529b96a0e2af00539657b90a350d10
     .claude/skills/hig-technologies/references/wallet.md: sha256:28e94ae042e225a95d810032431b44de4388f0b08716674687884387760cad6c
   content_hash: sha256:d1b05fa29d02ebeedfa3ed1e954838d81383b80e3dfe04f60a36f45d9ed3edcd
+- repo_url: saurabhkumar8112/cyclomatic-complexity-skill
+  name: cyclomatic-complexity
+  host: github.com
+  resolved_commit: 567886f485063c5f5f94503d5712ef75cbcbbd94
+  version: unknown
+  virtual_path: skills/cyclomatic-complexity
+  is_virtual: true
+  package_type: claude_skill
+  deployed_files:
+  - .agents/skills/cyclomatic-complexity
+  - .agents/skills/cyclomatic-complexity/SKILL.md
+  - .claude/skills/cyclomatic-complexity
+  - .claude/skills/cyclomatic-complexity/SKILL.md
+  deployed_file_hashes:
+    .agents/skills/cyclomatic-complexity/SKILL.md: sha256:6e8edae7a22588025255f054a6d614afa9959380aa3fdf0442c4ee046a7fbdca
+    .claude/skills/cyclomatic-complexity/SKILL.md: sha256:6e8edae7a22588025255f054a6d614afa9959380aa3fdf0442c4ee046a7fbdca
+  content_hash: sha256:310380a5edc5c29635e36ffa6aed608b4a2798def93ea32f04a78e3ef35a1b32
 - repo_url: unitoneai/securityskills
   name: agent-security
   host: github.com
@@ -8439,6 +8466,24 @@ deployments:
   - ibelick/ui-skills
   active_owner: ibelick/ui-skills
   content_hash: sha256:adba4fa94a9ca0291811ac26405e8fe15c1a6375743a80971c6f895bb837eeed
+- kind: project-relative
+  target: claude
+  value: .claude/skills/cyclomatic-complexity
+  runtime: null
+  scope: project
+  owners:
+  - saurabhkumar8112/cyclomatic-complexity-skill/skills/cyclomatic-complexity
+  active_owner: saurabhkumar8112/cyclomatic-complexity-skill/skills/cyclomatic-complexity
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/cyclomatic-complexity/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - saurabhkumar8112/cyclomatic-complexity-skill/skills/cyclomatic-complexity
+  active_owner: saurabhkumar8112/cyclomatic-complexity-skill/skills/cyclomatic-complexity
+  content_hash: sha256:6e8edae7a22588025255f054a6d614afa9959380aa3fdf0442c4ee046a7fbdca
 - kind: project-relative
   target: claude
   value: .claude/skills/dependency-scanning
@@ -14084,6 +14129,42 @@ deployments:
   content_hash: sha256:6d3fd9e83b8f36e5213854779db49b256a457a7ebb4a503e53fa7dcff696adc3
 - kind: project-relative
   target: claude
+  value: .claude/skills/improve-animations
+  runtime: null
+  scope: project
+  owners:
+  - emilkowalski/skills
+  active_owner: emilkowalski/skills
+  content_hash: null
+- kind: project-relative
+  target: claude
+  value: .claude/skills/improve-animations/AUDIT.md
+  runtime: null
+  scope: project
+  owners:
+  - emilkowalski/skills
+  active_owner: emilkowalski/skills
+  content_hash: sha256:551c8473e20e5f4774680bc24d45e1c68e50992582720905c6b077756b7b5a55
+- kind: project-relative
+  target: claude
+  value: .claude/skills/improve-animations/PLAN-TEMPLATE.md
+  runtime: null
+  scope: project
+  owners:
+  - emilkowalski/skills
+  active_owner: emilkowalski/skills
+  content_hash: sha256:0a08ac8e23fd2082d7ffb86aeed7b789de77328c3cf874b16f1a755f2ef0a6ad
+- kind: project-relative
+  target: claude
+  value: .claude/skills/improve-animations/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - emilkowalski/skills
+  active_owner: emilkowalski/skills
+  content_hash: sha256:68f17bbc4671593d2f43dba26a679243e2153ba5f26965fb7d59df52842534ff
+- kind: project-relative
+  target: claude
   value: .claude/skills/improve-codebase-architecture
   runtime: null
   scope: project
@@ -16028,6 +16109,15 @@ deployments:
   content_hash: sha256:fddbeba65446fb6b07c9cf35868b0b3913cda5017de028c5a9c163f81dce53ea
 - kind: project-relative
   target: claude
+  value: .claude/skills/taste-skill
+  runtime: null
+  scope: project
+  owners:
+  - leonxlnx/taste-skill
+  active_owner: leonxlnx/taste-skill
+  content_hash: null
+- kind: project-relative
+  target: claude
   value: .claude/skills/taste-skill-v1
   runtime: null
   scope: project
@@ -16044,6 +16134,15 @@ deployments:
   - leonxlnx/taste-skill
   active_owner: leonxlnx/taste-skill
   content_hash: sha256:033d45af1ed23832730642f95f40ab49db7fb5222848489a6c5656144bfc6dae
+- kind: project-relative
+  target: claude
+  value: .claude/skills/taste-skill/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - leonxlnx/taste-skill
+  active_owner: leonxlnx/taste-skill
+  content_hash: sha256:aa194351b246b8b4799099d4ed7b033d29eab6e6e3d58d8d2172978be7b3ec89
 - kind: project-relative
   target: claude
   value: .claude/skills/tdd
@@ -21255,6 +21354,24 @@ deployments:
   - ibelick/ui-skills
   active_owner: ibelick/ui-skills
   content_hash: sha256:adba4fa94a9ca0291811ac26405e8fe15c1a6375743a80971c6f895bb837eeed
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/cyclomatic-complexity
+  runtime: null
+  scope: project
+  owners:
+  - saurabhkumar8112/cyclomatic-complexity-skill/skills/cyclomatic-complexity
+  active_owner: saurabhkumar8112/cyclomatic-complexity-skill/skills/cyclomatic-complexity
+  content_hash: null
+- kind: project-relative
+  target: copilot
+  value: .agents/skills/cyclomatic-complexity/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - saurabhkumar8112/cyclomatic-complexity-skill/skills/cyclomatic-complexity
+  active_owner: saurabhkumar8112/cyclomatic-complexity-skill/skills/cyclomatic-complexity
+  content_hash: sha256:6e8edae7a22588025255f054a6d614afa9959380aa3fdf0442c4ee046a7fbdca
 - kind: project-relative
   target: copilot
   value: .agents/skills/dependency-scanning

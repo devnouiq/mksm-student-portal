@@ -81,19 +81,20 @@
   @theme defaults above) needs no block.
 */
 
-/* Raga — warm North-Indian classical: terracotta + saffron on cream, editorial serif. */
+/* Raga — North-Indian classical at dusk: deep indigo + marigold on ivory,
+   editorial serif. Indigo/gold is the concert palette, not a generic warm cream. */
 :root[data-theme="raga"] {
-  --color-brand-50: #fbf3ee;
-  --color-brand-100: #f6e2d5;
-  --color-brand-200: #eec3ab;
-  --color-brand-300: #e19e79;
-  --color-brand-400: #d1774b;
-  --color-brand-500: #bf5a2c;
-  --color-brand-600: #a84921; /* primary — terracotta */
-  --color-brand-700: #8a3a1a;
-  --color-brand-800: #6f3017;
-  --color-brand-900: #5c2915;
-  --color-brand-950: #331207;
+  --color-brand-50: #f2f0fb;
+  --color-brand-100: #e5e1f6;
+  --color-brand-200: #cbc4ee;
+  --color-brand-300: #a99ee0;
+  --color-brand-400: #8574cf;
+  --color-brand-500: #6a56bd;
+  --color-brand-600: #4c3a8a; /* primary — deep raga indigo */
+  --color-brand-700: #3d2f70;
+  --color-brand-800: #33285d;
+  --color-brand-900: #2b224d;
+  --color-brand-950: #1a1430;
 
   --color-ink-50: #faf6ee;
   --color-ink-100: #f2ebde;
@@ -124,8 +125,8 @@
   --radius-lg: 0.875rem;
   --radius-xl: 1.125rem;
 
-  --shadow-card: 0 1px 2px rgba(83, 43, 20, 0.05), 0 1px 3px rgba(83, 43, 20, 0.07);
-  --shadow-pop: 0 6px 16px rgba(83, 43, 20, 0.1), 0 2px 4px rgba(83, 43, 20, 0.07);
+  --shadow-card: 0 1px 2px rgba(26, 20, 48, 0.05), 0 1px 3px rgba(26, 20, 48, 0.07);
+  --shadow-pop: 0 6px 16px rgba(26, 20, 48, 0.12), 0 2px 4px rgba(26, 20, 48, 0.08);
 }
 
 /* Studio — cool minimal, Apple-clean: refined blue on soft gray, one neutral grotesk. */
@@ -252,10 +253,11 @@
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
-:root[data-theme="studio"] .mksm-sidebar {
-  background: color-mix(in srgb, var(--color-surface) 80%, transparent);
+:root[data-theme="studio"] .mksm-rail {
+  background: color-mix(in srgb, var(--color-surface) 70%, transparent);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-right: 1px solid var(--color-border);
 }
 /* Tighten large display type as it grows (size-specific tracking). */
 :root[data-theme="studio"] h1,
@@ -278,7 +280,7 @@
 
 @media (prefers-reduced-transparency: reduce) {
   :root[data-theme="studio"] .mksm-topbar,
-  :root[data-theme="studio"] .mksm-sidebar {
+  :root[data-theme="studio"] .mksm-rail {
     background: var(--color-surface);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;

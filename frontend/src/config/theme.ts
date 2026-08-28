@@ -13,9 +13,9 @@ export interface ThemeOption {
 }
 
 export const THEMES: ThemeOption[] = [
-  { id: "classic", label: "Classic", blurb: "MKSM red · serif" },
-  { id: "raga", label: "Raga", blurb: "Warm saffron · editorial" },
-  { id: "studio", label: "Studio", blurb: "Cool minimal · Apple-clean" },
+  { id: "classic", label: "Classic", blurb: "Sidebar · MKSM red" },
+  { id: "raga", label: "Raga", blurb: "Top nav · night raga" },
+  { id: "studio", label: "Studio", blurb: "Icon rail · Apple-clean" },
 ];
 
 export const DEFAULT_THEME: ThemeId = "classic";

@@ -12,11 +12,13 @@ import {
 import { cn } from "@/lib/cn";
 
 /**
- * Switches the portal theme by setting <html data-theme> and persisting the
- * choice per-browser. The pre-paint script in the root layout applies the
- * saved value on load; this control keeps React state in sync after mount.
+ * Switches the portal layout by setting <html data-theme> and persisting the
+ * choice per-browser. Each value selects a whole shell (Classic sidebar / Raga
+ * top-nav / Studio icon-rail) plus its palette. The pre-paint script in the
+ * root layout applies the saved value on load; this control keeps React state
+ * in sync after mount.
  */
-export function ThemeSwitcher() {
+export function LayoutSwitcher() {
   const [theme, setTheme] = useState<ThemeId>(DEFAULT_THEME);
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -64,7 +66,7 @@ export function ThemeSwitcher() {
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="menu"
         aria-expanded={open}
-        aria-label={`Theme: ${active.label}. Change theme`}
+        aria-label={`Layout: ${active.label}. Change layout`}
         className="flex items-center gap-2 rounded-md border border-border bg-surface px-2.5 py-1.5 text-sm font-medium text-ink-700 shadow-card transition active:scale-[0.98] hover:bg-ink-100"
       >
         <PaintBrushBroad size={17} className="text-brand-600" />
@@ -78,7 +80,7 @@ export function ThemeSwitcher() {
           className="absolute right-0 z-40 mt-2 w-60 overflow-hidden rounded-lg border border-border bg-surface p-1 shadow-pop"
         >
           <p className="px-3 py-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Layout theme
+            Layout
           </p>
           {THEMES.map((t) => {
             const selected = t.id === theme;

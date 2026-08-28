@@ -1,6 +1,35 @@
 # Session State — MKSM Student Portal
 
-_Last updated: 2026-08-24_
+_Last updated: 2026-08-28_
+
+## Layout variants (2026-08-28)
+
+Added **three switchable layout shells** so the design direction can be chosen
+from real UX, not a mock: the layout switcher now swaps the whole shell +
+palette + type, not just tokens.
+
+- **Classic** — persistent left sidebar, MKSM red, serif (the reference layout).
+- **Raga** — horizontal top-nav (no sidebar), a सा-रे-ग-म sargam ribbon, a
+  centred editorial reading column; night-raga **indigo + marigold** on ivory
+  (grounded in North-Indian classical, deliberately not the terracotta-cream
+  AI default). Fraunces / Mukta.
+- **Studio** — floating translucent **icon rail** (labels on hover), a toolbar
+  content scrolls beneath, and a **⌘K command palette** to jump between screens;
+  Apple-blue, Inter, larger radii. Built with the apple-design skill.
+
+Architecture: `components/layout/portal-chrome.tsx` is now a dispatcher that
+reads the active variant on `<html data-theme>` and renders
+`shells/{classic,raga,studio}-shell.tsx`. Variant model + no-FOUC pre-paint
+script + `isThemeId` guard live in `config/theme.ts` (unit-tested,
+`config/theme.test.ts`, incl. a sandboxed run of the pre-paint script).
+
+Gates: build + **34 tests** green; secure-code-review of the diff found nothing
+(UI-only; static hrefs; validated variant; guarded localStorage; the sole
+`dangerouslySetInnerHTML` is the constant pre-paint script); role isolation
+preserved. **Accepted tradeoff:** the dispatcher renders Classic on SSR/first
+paint then swaps to the stored shell after mount — colors are correct instantly
+via the pre-paint script, only the nav structure reflows once for non-classic
+viewers; an SSR-inlined variant (cookie) removes it in M2.
 
 ## Repository layout (monorepo)
 

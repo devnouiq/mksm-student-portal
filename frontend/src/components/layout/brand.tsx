@@ -11,7 +11,7 @@ export function Brand({
   return (
     <span className={cn("flex items-center gap-2.5", className)}>
       <span
-        className="grid size-9 place-items-center rounded-md bg-brand-600 font-display text-lg font-semibold text-white shadow-card"
+        className="mksm-brand-tile grid size-9 place-items-center rounded-md bg-brand-600 font-display text-lg font-semibold text-white shadow-card"
         aria-hidden
       >
         M

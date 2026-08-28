@@ -10,6 +10,7 @@ import { cn } from "@/lib/cn";
 import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Brand } from "./brand";
+import { ThemeSwitcher } from "./theme-switcher";
 
 interface ChromeUser {
   name: string;
@@ -96,7 +97,7 @@ export function PortalChrome({
   return (
     <div className="min-h-full lg:grid lg:grid-cols-[16rem_1fr]">
       {/* Desktop sidebar */}
-      <aside className="sticky top-0 hidden h-screen border-r border-border bg-surface lg:block">
+      <aside className="mksm-sidebar sticky top-0 hidden h-screen border-r border-border bg-surface lg:block">
         {sidebarInner}
       </aside>
 
@@ -124,7 +125,7 @@ export function PortalChrome({
 
       <div className="flex min-h-screen flex-col">
         {/* Topbar */}
-        <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border bg-surface/90 px-4 backdrop-blur lg:px-8">
+        <header className="mksm-topbar sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border bg-surface/90 px-4 backdrop-blur lg:px-8">
           <button
             type="button"
             onClick={() => setDrawerOpen(true)}
@@ -137,6 +138,7 @@ export function PortalChrome({
             <Brand subtitle={`${roleLabels[role]} Portal`} />
           </div>
           <div className="ml-auto flex items-center gap-3">
+            <ThemeSwitcher />
             <Badge tone="brand">{roleLabels[role]}</Badge>
             <span className="hidden text-sm text-muted-foreground sm:inline">
               MKSM #{user.mksmNo}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Brand } from "@/components/layout/brand";
+import { ThemeSwitcher } from "@/components/layout/theme-switcher";
 import { formatNumber } from "@/lib/format";
 import { SignInForm } from "./sign-in-form";
 
@@ -47,7 +48,10 @@ export default function LoginPage() {
       </section>
 
       {/* Form panel */}
-      <section className="flex items-center justify-center bg-surface px-6 py-12">
+      <section className="relative flex items-center justify-center bg-surface px-6 py-12">
+        <div className="absolute right-4 top-4">
+          <ThemeSwitcher />
+        </div>
         <div className="w-full max-w-sm">
           <div className="mb-8 lg:hidden">
             <Brand subtitle="Student Portal" />

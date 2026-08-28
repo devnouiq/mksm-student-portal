@@ -75,6 +75,107 @@
   --shadow-pop: 0 4px 12px rgba(34, 32, 28, 0.08), 0 2px 4px rgba(34, 32, 28, 0.06);
 }
 
+/*
+  Theme variants. Each block re-points the same design tokens the whole app
+  already consumes, so switching data-theme reskins every screen. Classic (the
+  @theme defaults above) needs no block.
+*/
+
+/* Raga — warm North-Indian classical: terracotta + saffron on cream, editorial serif. */
+:root[data-theme="raga"] {
+  --color-brand-50: #fbf3ee;
+  --color-brand-100: #f6e2d5;
+  --color-brand-200: #eec3ab;
+  --color-brand-300: #e19e79;
+  --color-brand-400: #d1774b;
+  --color-brand-500: #bf5a2c;
+  --color-brand-600: #a84921; /* primary — terracotta */
+  --color-brand-700: #8a3a1a;
+  --color-brand-800: #6f3017;
+  --color-brand-900: #5c2915;
+  --color-brand-950: #331207;
+
+  --color-ink-50: #faf6ee;
+  --color-ink-100: #f2ebde;
+  --color-ink-200: #e6dcc7;
+  --color-ink-300: #d3c4a6;
+  --color-ink-400: #a99a7d;
+  --color-ink-500: #7d7159;
+  --color-ink-600: #5f5645;
+  --color-ink-700: #4a4335;
+  --color-ink-800: #342f25;
+  --color-ink-900: #241f18;
+
+  --color-background: #fdfaf3;
+  --color-surface: #fffdf8;
+  --color-surface-muted: #f6efe1;
+  --color-border: #e6dcc7;
+  --color-foreground: var(--color-ink-900);
+  --color-muted-foreground: var(--color-ink-500);
+  --color-primary: var(--color-brand-600);
+  --color-primary-foreground: #fffdf8;
+  --color-ring: var(--color-saffron-500);
+
+  --font-display: var(--font-raga-display), ui-serif, Georgia, serif;
+  --font-sans: var(--font-raga-body), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1.125rem;
+
+  --shadow-card: 0 1px 2px rgba(83, 43, 20, 0.05), 0 1px 3px rgba(83, 43, 20, 0.07);
+  --shadow-pop: 0 6px 16px rgba(83, 43, 20, 0.1), 0 2px 4px rgba(83, 43, 20, 0.07);
+}
+
+/* Studio — cool minimal, Apple-clean: refined blue on soft gray, one neutral grotesk. */
+:root[data-theme="studio"] {
+  --color-brand-50: #eef6ff;
+  --color-brand-100: #d9ecff;
+  --color-brand-200: #b7dbff;
+  --color-brand-300: #83c3ff;
+  --color-brand-400: #47a3ff;
+  --color-brand-500: #1a86ff;
+  --color-brand-600: #0071e3; /* primary — Apple blue */
+  --color-brand-700: #0a5fbf;
+  --color-brand-800: #0d4d99;
+  --color-brand-900: #103f7a;
+  --color-brand-950: #0a2547;
+
+  --color-ink-50: #f9fafb;
+  --color-ink-100: #f1f3f5;
+  --color-ink-200: #e5e7eb;
+  --color-ink-300: #d1d5db;
+  --color-ink-400: #9aa1ac;
+  --color-ink-500: #6b7280;
+  --color-ink-600: #4b5563;
+  --color-ink-700: #374151;
+  --color-ink-800: #1f2937;
+  --color-ink-900: #111827;
+
+  --color-background: #f5f5f7;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f5f5f7;
+  --color-border: #e5e7eb;
+  --color-foreground: var(--color-ink-900);
+  --color-muted-foreground: var(--color-ink-500);
+  --color-primary: var(--color-brand-600);
+  --color-primary-foreground: #ffffff;
+  --color-ring: var(--color-brand-400);
+
+  --font-display: var(--font-studio), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-studio), ui-sans-serif, system-ui, sans-serif;
+
+  /* Rounder surfaces, softer cool-tinted depth. */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+
+  --shadow-card: 0 1px 2px rgba(17, 24, 39, 0.04), 0 4px 12px rgba(17, 24, 39, 0.05);
+  --shadow-pop: 0 8px 28px rgba(17, 24, 39, 0.1), 0 2px 6px rgba(17, 24, 39, 0.06);
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
@@ -141,6 +242,47 @@
 
 .mksm-marquee:hover .mksm-marquee-track {
   animation-play-state: paused;
+}
+
+/* Theme-scoped chrome accents (structure stays shared; only the finish changes). */
+
+/* Studio — translucent, Apple-style toolbar that content scrolls beneath. */
+:root[data-theme="studio"] .mksm-topbar {
+  background: color-mix(in srgb, var(--color-surface) 72%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+:root[data-theme="studio"] .mksm-sidebar {
+  background: color-mix(in srgb, var(--color-surface) 80%, transparent);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+/* Tighten large display type as it grows (size-specific tracking). */
+:root[data-theme="studio"] h1,
+:root[data-theme="studio"] h2,
+:root[data-theme="studio"] .font-display {
+  letter-spacing: -0.02em;
+}
+
+/* Raga — a saffron thread under the toolbar and a warm gradient monogram. */
+:root[data-theme="raga"] .mksm-topbar {
+  box-shadow: inset 0 -2px 0 0 var(--color-saffron-500);
+}
+:root[data-theme="raga"] .mksm-brand-tile {
+  background-image: linear-gradient(
+    135deg,
+    var(--color-saffron-500),
+    var(--color-brand-600)
+  );
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root[data-theme="studio"] .mksm-topbar,
+  :root[data-theme="studio"] .mksm-sidebar {
+    background: var(--color-surface);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

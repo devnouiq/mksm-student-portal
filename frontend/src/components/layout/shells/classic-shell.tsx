@@ -10,6 +10,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Brand } from "../brand";
 import { LayoutSwitcher } from "../layout-switcher";
+import { SargamWatermark } from "../sargam-watermark";
 import type { ShellProps } from "./types";
 
 /**
@@ -132,7 +133,11 @@ export function ClassicShell({ role, user, children }: ShellProps) {
           </div>
         </header>
 
-        <main className="flex-1 px-4 py-6 lg:px-8 lg:py-8">{children}</main>
+        <main className="relative flex-1 overflow-hidden px-4 py-6 lg:px-8 lg:py-8">
+          {/* Ambient sargam — the ascending scale, faint behind the content */}
+          <SargamWatermark className="-top-4 right-0 pr-3 text-right text-[6rem] text-brand-500/[0.16] lg:text-[7.5rem]" />
+          <div className="relative">{children}</div>
+        </main>
       </div>
     </div>
   );

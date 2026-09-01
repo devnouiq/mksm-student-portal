@@ -2,6 +2,32 @@
 
 _Last updated: 2026-09-01_
 
+## MKSM music identity — Classic theme (2026-09-01)
+
+Reworked the Classic theme to match the school's own identity (from
+mksm.maheshkale.com), answering the "make it feel like music / take inspiration
+from their actual work" feedback. All motifs use authentic Hindustani notation,
+not generic Western note symbols.
+
+- **Palette** retuned from the invented red to **kesar gold on warm ivory** —
+  brand ramp kept dark at 600/700 so white-on-brand fills stay legible (~5:1).
+- **Tanpura mark** replaces the flat "M" tile in `layout/brand.tsx` (inline SVG:
+  gourd, neck, drone strings, pegs) — the instrument built into MKSM's own logo.
+- **Taal mark** (`layout/taal-mark.tsx`) under every page title — one āvartan:
+  sam (× gold diamond) on the laya line, beats, a hollow khali (○) at the vibhag.
+- **Sargam watermark** (`layout/sargam-watermark.tsx`) — the ascending scale
+  सा रे ग म प ध नि सां, ambient top-right on content pages and on the login stage.
+- **Login stage** — dark charcoal + gold spotlight, tanpura drone strings, a
+  meend glide curve, and the school's own voice line ("Spreading love through
+  music, one note at a time").
+- **Stat cards** each wear a faint swara (stable per label); **empty states** get
+  a warm gold icon tile + sargam backdrop.
+
+Intensities were raised after review — the first pass was too faint to see.
+Gates: tsc clean, **44 tests** green, build compiled (36 routes), console clean,
+verified live on login / Practice Material / overview. Studio shell left minimal;
+Raga inherits the warm ivory but keeps its indigo + marigold.
+
 ## Client feedback — round 2 (2026-09-01)
 
 Four review items, implemented exactly (nothing added beyond scope):

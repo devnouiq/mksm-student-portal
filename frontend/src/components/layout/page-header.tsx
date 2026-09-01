@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/cn";
+import { TaalMark } from "./taal-mark";
 
 interface PageHeaderProps {
   title: string;
@@ -25,8 +26,8 @@ export function PageHeader({
         <h1 className="font-display text-2xl leading-tight text-ink-900 sm:text-3xl">
           {title}
         </h1>
-        {/* Sur rekha — a sam-marked accent line; the school's musical signature. */}
-        <span className="mksm-sur-rule" aria-hidden />
+        {/* Taal mark — a sam-opened rhythm cycle; the school's musical signature. */}
+        <TaalMark />
         {description ? (
           <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
             {description}

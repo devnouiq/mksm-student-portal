@@ -2,9 +2,9 @@
 
 /*
   MKSM Student Portal — design system
-  Brand contract (PRD §7): MKSM red (#a02020), white surfaces,
-  serif display + sans body. One accent (brand red); neutrals are
-  warm stone; semantic colors are used only for status.
+  Brand: MKSM kesar gold on warm ivory, drawn from the school's own identity
+  (the tanpura mark, warm gold under stage light). Deep gold primary, bright
+  gold accent, warm-stone neutrals; semantic colors are used only for status.
 */
 
 @theme {
@@ -12,30 +12,32 @@
   --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-display-src), ui-serif, Georgia, serif;
 
-  /* Brand — MKSM red */
-  --color-brand-50: #fdf3f2;
-  --color-brand-100: #fbe4e2;
-  --color-brand-200: #f6cbc7;
-  --color-brand-300: #eea6a0;
-  --color-brand-400: #e17169;
-  --color-brand-500: #d0453c;
-  --color-brand-600: #a02020; /* primary brand */
-  --color-brand-700: #871e1e;
-  --color-brand-800: #711d1d;
-  --color-brand-900: #601c1c;
-  --color-brand-950: #350b0b;
+  /* Brand — MKSM kesar gold. Drawn from the school's own identity (warm gold
+     on a dark stage, the tanpura mark), not a generic red. Kept dark at 600/700
+     so white-on-brand fills stay legible; the bright signature gold lives at 400. */
+  --color-brand-50: #fbf6e9;
+  --color-brand-100: #f6ead0;
+  --color-brand-200: #ecd6a3;
+  --color-brand-300: #dcbb63;
+  --color-brand-400: #c99f33; /* bright signature gold — accents on dark */
+  --color-brand-500: #b0851d;
+  --color-brand-600: #946d12; /* primary — deep kesar (white text ~5:1) */
+  --color-brand-700: #7a590f;
+  --color-brand-800: #654a0f;
+  --color-brand-900: #533d10;
+  --color-brand-950: #2f2207;
 
-  /* Warm neutral (stone) — surfaces + text */
-  --color-ink-50: #faf9f7;
-  --color-ink-100: #f3f1ed;
-  --color-ink-200: #e7e3dc;
-  --color-ink-300: #d5cfc4;
-  --color-ink-400: #a8a093;
-  --color-ink-500: #7c7568;
-  --color-ink-600: #5f594e;
-  --color-ink-700: #4a463d;
-  --color-ink-800: #34312b;
-  --color-ink-900: #22201c;
+  /* Warm neutral (warm stone, slightly deeper to sit on ivory) */
+  --color-ink-50: #faf7f0;
+  --color-ink-100: #f2eee3;
+  --color-ink-200: #e7e0d0;
+  --color-ink-300: #d5ccb8;
+  --color-ink-400: #a69c86;
+  --color-ink-500: #79705d;
+  --color-ink-600: #5b5344;
+  --color-ink-700: #453f33;
+  --color-ink-800: #2e2a21;
+  --color-ink-900: #1e1b15;
 
   /* Saffron — reserved for Sankalp (pledge/practice) accents only */
   --color-saffron-100: #fdf0d9;
@@ -53,11 +55,11 @@
   --color-info-500: #2f6db0;
   --color-info-100: #e2edf7;
 
-  /* Roles (semantic aliases) */
-  --color-background: #ffffff;
-  --color-surface: #ffffff;
-  --color-surface-muted: var(--color-ink-50);
-  --color-border: var(--color-ink-200);
+  /* Roles (semantic aliases) — warm ivory ground, warm-white cards */
+  --color-background: #faf6ec;
+  --color-surface: #fffdf7;
+  --color-surface-muted: #f3ecdb;
+  --color-border: #e8dfc9;
   --color-foreground: var(--color-ink-900);
   --color-muted-foreground: var(--color-ink-500);
   --color-primary: var(--color-brand-600);
@@ -252,50 +254,81 @@
 }
 
 /*
-  Sur rekha — the MKSM signature. A short accent rule under each page title
-  with a rotated "sam" marker at its head (the emphatic first beat of the taal).
-  Token-tinted, so each theme carries its own colour. A subtle, recurring nod to
-  the school's classical-music identity on every screen.
+  Taal mark — the MKSM signature under each page title. One rhythm cycle read
+  left to right: the sam (× — the emphatic first beat) opens in brand gold, a
+  couple of beats follow, and a hollow khali (○ — the empty beat) marks the
+  vibhag. Token-tinted, so each theme carries its own colour. A subtle, authentic
+  nod to the school's music on every screen — the real notation, not ornament.
 */
-.mksm-sur-rule {
-  display: block;
+.mksm-taal {
   position: relative;
-  margin-top: 0.5rem;
-  width: 2.75rem;
-  height: 2px;
-  border-radius: 2px;
-  background: linear-gradient(
-    90deg,
-    var(--color-brand-600),
-    color-mix(in srgb, var(--color-saffron-500) 70%, transparent)
-  );
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 0.6rem;
+  padding: 0 3px;
+  height: 14px;
+  line-height: 0;
 }
-.mksm-sur-rule::before {
+/* laya line — the time thread the beats sit on */
+.mksm-taal::before {
   content: "";
   position: absolute;
-  left: -1px;
+  left: 4px;
+  right: 4px;
   top: 50%;
+  height: 1.5px;
+  transform: translateY(-50%);
+  background: color-mix(in srgb, var(--color-brand-500) 40%, transparent);
+}
+.mksm-taal-beat,
+.mksm-taal-khali,
+.mksm-taal-sam {
+  position: relative;
+  display: block;
+  flex: none;
+}
+/* beats — solid gold dots on the line */
+.mksm-taal-beat {
   width: 6px;
   height: 6px;
-  border-radius: 1px;
-  transform: translateY(-50%) rotate(45deg);
+  border-radius: 9999px;
+  background: var(--color-brand-500);
+}
+/* sam — the accented first beat, a bold gold diamond */
+.mksm-taal-sam {
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+  transform: rotate(45deg);
   background: var(--color-brand-600);
+  box-shadow: 0 1px 2px rgba(83, 61, 16, 0.35);
+}
+/* khali — the empty beat, a hollow ring (fill = surface so the line clears it) */
+.mksm-taal-khali {
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  border: 2px solid var(--color-brand-500);
+  background: var(--color-surface);
 }
 
-/* Raga wears the marigold thread first, resolving into indigo. */
-:root[data-theme="raga"] .mksm-sur-rule {
-  background: linear-gradient(
-    90deg,
-    var(--color-saffron-500),
-    color-mix(in srgb, var(--color-brand-600) 55%, transparent)
-  );
-}
-:root[data-theme="raga"] .mksm-sur-rule::before {
+/* Raga opens the cycle in marigold. */
+:root[data-theme="raga"] .mksm-taal-sam {
   background: var(--color-saffron-500);
+}
+:root[data-theme="raga"] .mksm-taal-beat {
+  background: var(--color-saffron-500);
+}
+:root[data-theme="raga"] .mksm-taal::before {
+  background: color-mix(in srgb, var(--color-saffron-500) 45%, transparent);
+}
+:root[data-theme="raga"] .mksm-taal-khali {
+  border-color: var(--color-brand-600);
 }
 
 /* Studio stays deliberately minimal — no ornament. */
-:root[data-theme="studio"] .mksm-sur-rule {
+:root[data-theme="studio"] .mksm-taal {
   display: none;
 }
 

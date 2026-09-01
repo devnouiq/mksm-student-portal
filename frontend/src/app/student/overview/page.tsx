@@ -1,8 +1,17 @@
 import type { Metadata } from "next";
+import type { Icon } from "@phosphor-icons/react";
 import Link from "next/link";
 import {
   ArrowRight,
   CalendarBlank,
+  CalendarCheck,
+  CheckCircle,
+  GraduationCap,
+  MicrophoneStage,
+  MusicNoteSimple,
+  MusicNotes,
+  PianoKeys,
+  Timer,
   UserSound,
   VideoCamera,
 } from "@phosphor-icons/react/dist/ssr";
@@ -21,6 +30,17 @@ export const metadata: Metadata = { title: "Overview" };
 
 function firstName(name: string) {
   return name.split(" ")[0];
+}
+
+/* Give each course a face: pick an instrument/voice icon from its name so the
+   list reads as music, not as generic rows. Falls back to a plain note. */
+const COURSE_ICONS: { match: RegExp; icon: Icon }[] = [
+  { match: /vocal|classical|khayal|raga|voice/i, icon: MicrophoneStage },
+  { match: /bhajan|light|devotional|abhang|semi/i, icon: MusicNotes },
+  { match: /harmonium|keyboard|piano|sur/i, icon: PianoKeys },
+];
+function courseIcon(name: string): Icon {
+  return COURSE_ICONS.find((c) => c.match.test(name))?.icon ?? MusicNoteSimple;
 }
 
 export default async function StudentOverviewPage() {
@@ -56,10 +76,12 @@ export default async function StudentOverviewPage() {
           value={formatHours(data.sankalp.personalHours)}
           suffix="hrs"
           tone="saffron"
+          icon={Timer}
         />
         <StatTile
           label="Active courses"
           value={String(data.courses.length)}
+          icon={GraduationCap}
         />
         <StatTile
           label="Renews in"
@@ -69,6 +91,7 @@ export default async function StudentOverviewPage() {
               : String(data.subscription.daysToRenew)
           }
           suffix={data.subscription.daysToRenew == null ? "" : "days"}
+          icon={CalendarCheck}
         />
       </div>
 
@@ -88,24 +111,40 @@ export default async function StudentOverviewPage() {
             <CardContent className="space-y-3">
               {data.courses.map((course) => {
                 const progress = displayProgress(course);
+                const pct = toPercent(progress);
+                const done = pct >= 100;
+                const Icon = courseIcon(course.courseName);
                 return (
                 <div
                   key={course.courseId}
-                  className="flex flex-col gap-3 rounded-md border border-border p-4 sm:flex-row sm:items-center sm:justify-between"
+                  className="group flex flex-col gap-4 rounded-lg border border-border p-4 transition hover:border-brand-300 hover:shadow-card sm:flex-row sm:items-center"
                 >
-                  <div className="min-w-0">
-                    <p className="font-medium text-ink-900">{course.courseName}</p>
-                    <p className="text-sm text-muted-foreground">
+                  <span
+                    className="grid size-11 shrink-0 place-items-center rounded-lg bg-brand-50 text-brand-600 ring-1 ring-inset ring-brand-100 transition group-hover:bg-brand-100"
+                    aria-hidden
+                  >
+                    <Icon size={22} weight="duotone" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-medium text-ink-900">{course.courseName}</p>
+                    <p className="truncate text-sm text-muted-foreground">
                       {course.batchName} · {course.teacherName}
                     </p>
                     <div className="mt-2 flex items-center gap-3">
                       <Progress
                         value={progress}
-                        className="max-w-40"
+                        tone={done ? "saffron" : "brand"}
+                        className="max-w-44 flex-1"
                         label={`${course.courseName} progress`}
                       />
-                      <span className="text-xs font-medium text-ink-500">
-                        {toPercent(progress)}%
+                      <span
+                        className={
+                          "inline-flex shrink-0 items-center gap-1 text-xs font-semibold " +
+                          (done ? "text-saffron-700" : "text-ink-500")
+                        }
+                      >
+                        {done ? <CheckCircle size={13} weight="fill" /> : null}
+                        {pct}%
                       </span>
                     </div>
                   </div>
@@ -266,29 +305,47 @@ function StatTile({
   value,
   suffix,
   tone = "brand",
+  icon: Icon,
 }: {
   label: string;
   value: string;
   suffix?: string;
   tone?: "brand" | "saffron";
+  icon?: Icon;
 }) {
+  const saffron = tone === "saffron";
   return (
-    <Card>
-      <CardContent className="pt-5">
-        <p className="text-sm text-muted-foreground">{label}</p>
-        <p className="mt-1 font-display text-3xl text-ink-900">
-          {value}
-          {suffix ? (
-            <span
-              className={
-                "ml-1 text-base " +
-                (tone === "saffron" ? "text-saffron-700" : "text-brand-600")
-              }
-            >
-              {suffix}
-            </span>
-          ) : null}
-        </p>
+    <Card className="transition hover:shadow-pop">
+      <CardContent className="flex items-start justify-between gap-3 pt-5">
+        <div className="min-w-0">
+          <p className="text-sm text-muted-foreground">{label}</p>
+          <p className="mt-1 font-display text-3xl text-ink-900">
+            {value}
+            {suffix ? (
+              <span
+                className={
+                  "ml-1 text-base " +
+                  (saffron ? "text-saffron-700" : "text-brand-600")
+                }
+              >
+                {suffix}
+              </span>
+            ) : null}
+          </p>
+        </div>
+        {Icon ? (
+          <span
+            className={
+              "grid size-10 shrink-0 place-items-center rounded-lg ring-1 ring-inset " +
+              (saffron
+                ? "bg-saffron-100 text-saffron-700 ring-saffron-300/40"
+                : "bg-brand-50 text-brand-600 ring-brand-100")
+            }
+            aria-hidden
+          >
+            <Icon size={20} weight="duotone" />
+          </span>
+        ) : null}
       </CardContent>
     </Card>
   );

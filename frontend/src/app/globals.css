@@ -196,6 +196,21 @@
     text-rendering: optimizeLegibility;
   }
 
+  /* Film grain — a faint, fixed noise tile that breaks the flat digital surface
+     (the tell of an untouched AI layout). Pointer-transparent; over content but
+     imperceptible on text at this opacity. */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 140px 140px;
+  }
+
   h1, h2, h3, .font-display {
     font-family: var(--font-display);
     font-optical-sizing: auto;
@@ -380,8 +395,111 @@
   }
 }
 
+/*
+  Tanpura resonance — the four strings shimmer gently out of phase and sound
+  waves rise from the bridge, the sustained drone made visible. Decorative,
+  atmospheric, GPU-only (transform/opacity), and disabled under reduced motion.
+*/
+.mksm-tanpura-string {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mksm-string 2.6s ease-in-out infinite;
+}
+.mksm-tanpura-string:nth-child(2) { animation-delay: -0.5s; }
+.mksm-tanpura-string:nth-child(3) { animation-delay: -1.1s; }
+.mksm-tanpura-string:nth-child(4) { animation-delay: -1.7s; }
+@keyframes mksm-string {
+  0%, 100% { transform: translateX(-0.6px); opacity: 0.6; }
+  50% { transform: translateX(0.6px); opacity: 1; }
+}
+
+.mksm-tanpura-wave {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: mksm-wave 5s ease-out infinite;
+}
+.mksm-tanpura-waves .mksm-tanpura-wave:nth-child(2) { animation-delay: -1.7s; }
+.mksm-tanpura-waves .mksm-tanpura-wave:nth-child(3) { animation-delay: -3.4s; }
+@keyframes mksm-wave {
+  0% { transform: translateY(0) scale(0.9); opacity: 0; }
+  20% { opacity: 0.5; }
+  100% { transform: translateY(-14px) scale(1.35); opacity: 0; }
+}
+
+/*
+  Raga identity — distinct from Classic on purpose. Where Classic is the still,
+  warm drone (tanpura + taal + grain), Raga is melody in motion: the sargam
+  ribbon lights up swara by swara, as if the scale is being sung up. Classic's
+  rhythm/texture motifs are withdrawn here so the two themes never read alike.
+*/
+:root[data-theme="raga"] .mksm-sargam-swara {
+  color: color-mix(in srgb, var(--color-brand-600) 35%, transparent);
+  animation: mksm-sargam-glow 3.6s ease-in-out infinite;
+}
+@keyframes mksm-sargam-glow {
+  0%, 68%, 100% {
+    color: color-mix(in srgb, var(--color-brand-600) 35%, transparent);
+    transform: translateY(0);
+  }
+  12% {
+    color: var(--color-saffron-500);
+    transform: translateY(-2px);
+  }
+}
+/* Raga drops Classic's rhythm mark and film grain — its own smooth night. */
+:root[data-theme="raga"] .mksm-taal { display: none; }
+:root[data-theme="raga"] body::after { display: none; }
+
+/*
+  Login stages — one per theme, structurally different (not a recolour). Each
+  stage is rendered in the DOM; only the active theme's is shown, gated by
+  data-theme so it stays server-rendered with the correct colours on first
+  paint. Hidden on small screens (form-only), revealed from lg up.
+*/
+.mksm-stage { display: none; }
+@media (min-width: 1024px) {
+  :root[data-theme="classic"] .mksm-stage-classic,
+  :root[data-theme="raga"] .mksm-stage-raga,
+  :root[data-theme="studio"] .mksm-stage-studio {
+    display: flex;
+  }
+}
+
+/* Mobile hero — compact theme banner over the form; the stage is lg-only, so
+   this keeps each theme distinct below lg. One shown, gated by data-theme. */
+.mksm-mhero { display: none; }
+@media (max-width: 1023.98px) {
+  :root[data-theme="classic"] .mksm-mhero-classic,
+  :root[data-theme="raga"] .mksm-mhero-raga,
+  :root[data-theme="studio"] .mksm-mhero-studio {
+    display: block;
+  }
+}
+
+/* Raga aroha — the ascending scale climbing the stage, each swara lit in turn. */
+.mksm-aroha-swara {
+  color: color-mix(in srgb, var(--color-saffron-300) 20%, transparent);
+  animation: mksm-aroha-climb 4.4s ease-in-out infinite;
+}
+@keyframes mksm-aroha-climb {
+  0%, 72%, 100% {
+    color: color-mix(in srgb, var(--color-saffron-300) 20%, transparent);
+    transform: translateY(0);
+  }
+  14% {
+    color: color-mix(in srgb, var(--color-saffron-300) 90%, transparent);
+    transform: translateY(-4px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .mksm-aroha-swara { animation: none; }
   .mksm-skeleton { animation: none; }
   .mksm-marquee-track { animation: none; }
+  .mksm-tanpura-string,
+  .mksm-tanpura-wave { animation: none; opacity: 1; }
+  .mksm-tanpura-wave { opacity: 0; }
+  .mksm-sargam-swara { animation: none; }
+  .mksm-sargam-swara:first-child { color: var(--color-brand-600); }
   * { scroll-behavior: auto !important; }
 }

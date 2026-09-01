@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Brand } from "../brand";
 import { LayoutSwitcher } from "../layout-switcher";
 import { SargamWatermark } from "../sargam-watermark";
+import { TanpuraArt } from "../tanpura-art";
 import type { ShellProps } from "./types";
 
 /**
@@ -56,12 +57,18 @@ export function ClassicShell({ role, user, children }: ShellProps) {
   );
 
   const sidebarInner = (
-    <div className="flex h-full flex-col">
-      <div className="flex h-16 items-center border-b border-border px-5">
-        <Brand subtitle={`${roleLabels[role]} Portal`} />
-      </div>
-      {nav}
-      <div className="border-t border-border p-3">
+    <div className="relative flex h-full flex-col overflow-hidden">
+      {/* Ambient tanpura — the drone standing in the background of the rail */}
+      <TanpuraArt
+        aria-hidden
+        className="pointer-events-none absolute bottom-20 left-1/2 h-[18rem] w-auto -translate-x-1/2 text-brand-600/[0.30]"
+      />
+      <div className="relative z-10 flex h-full flex-col">
+        <div className="flex h-16 items-center border-b border-border px-5">
+          <Brand subtitle={`${roleLabels[role]} Portal`} />
+        </div>
+        {nav}
+        <div className="relative border-t border-border bg-surface p-3">
         <div className="flex items-center gap-3 rounded-md px-2 py-2">
           <Avatar name={user.name} />
           <div className="min-w-0 flex-1">
@@ -80,6 +87,7 @@ export function ClassicShell({ role, user, children }: ShellProps) {
           <SignOut size={18} />
           Switch role / Log out
         </Link>
+        </div>
       </div>
     </div>
   );

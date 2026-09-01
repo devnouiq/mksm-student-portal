@@ -75,10 +75,8 @@ export function RagaShell({ role, user, children }: ShellProps) {
             {SARGAM.map((s, i) => (
               <li
                 key={s}
-                className={cn(
-                  "font-display text-sm",
-                  i === 0 ? "text-brand-600" : "text-ink-300",
-                )}
+                className="mksm-sargam-swara font-display text-sm"
+                style={{ animationDelay: `${i * 0.32}s` }}
               >
                 {s}
               </li>

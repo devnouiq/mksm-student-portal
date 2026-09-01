@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Brand } from "@/components/layout/brand";
 import { LayoutSwitcher } from "@/components/layout/layout-switcher";
-import { TanpuraArt } from "@/components/layout/tanpura-art";
+import { SitarArt } from "@/components/layout/sitar-art";
+import { StaffRibbon } from "@/components/layout/staff-ribbon";
+import { WaterStain } from "@/components/layout/water-stain";
 import { formatNumber } from "@/lib/format";
 import { SignInForm } from "./sign-in-form";
 
@@ -26,46 +28,157 @@ function SankalpCounter({ subdued = false }: { subdued?: boolean }) {
 
 export default function LoginPage() {
   return (
-    <div className="grid min-h-[100dvh] lg:grid-cols-2">
-      {/* ── Classic stage — a warm charcoal room under gold light, tanpura droning ── */}
-      <section className="mksm-stage mksm-stage-classic relative flex-col justify-between overflow-hidden bg-ink-900 p-10 text-white">
+    <div className="relative grid min-h-[100dvh] lg:grid-cols-2">
+      {/* Wave divider — one normalised path, used both to clip the ivory panel
+          and (visually) as the single boundary between dark and ivory. */}
+      <svg className="absolute h-0 w-0" aria-hidden>
+        <defs>
+          <clipPath id="mksm-wave" clipPathUnits="objectBoundingBox">
+            <path d="M0.50,0 C0.49,0.18 0.585,0.4 0.51,0.56 C0.47,0.72 0.575,0.9 0.50,1 L1,1 L1,0 Z" />
+          </clipPath>
+        </defs>
+      </svg>
+
+      {/* ── Classic desktop stage — ONE full-bleed dark element. Its wavy right
+          edge (mirrored by the ivory clip) is the ONLY divider: no straight
+          seam, no middle band. Everything dark lives here. ── */}
+      <div
+        className="mksm-classic-bg pointer-events-none absolute inset-0 z-0 overflow-hidden bg-ink-900"
+        aria-hidden
+      >
+        {/* Warm room light. One motivated source: it pools behind the body of
+            the instrument so the sitar is lit from behind, with a little
+            spill off the top-left wall and a floor bounce beneath. A vignette
+            sits over all of it so the light reads as light and not as a patch
+            — that is what keeps the falloff from showing an edge. */}
         <div
-          className="pointer-events-none absolute inset-0"
+          className="absolute inset-0"
+          style={{
+            backgroundImage: [
+              // vignette, painted over the pools
+              "radial-gradient(115% 95% at 34% 60%, transparent 40%, rgba(9,7,4,0.42) 100%)",
+              // key light, behind and just above the gourd
+              "radial-gradient(36% 42% at 39% 66%, rgba(216,193,146,0.20) 0%, rgba(206,183,136,0.11) 40%, rgba(198,175,128,0.04) 66%, transparent 84%)",
+              // wall spill, pushed off-canvas so it never reads as a blob
+              "radial-gradient(46% 38% at 2% -10%, rgba(196,173,126,0.10) 0, transparent 62%)",
+              // floor bounce
+              "radial-gradient(58% 30% at 28% 108%, rgba(196,173,126,0.09) 0, transparent 72%)",
+            ].join(", "),
+          }}
+        />
+        {/* Instrument strings — barely-there vertical threads for depth */}
+        <div
+          className="absolute inset-0"
           style={{
             backgroundImage:
-              "radial-gradient(120% 90% at 15% 0%, rgba(201,159,51,0.30) 0, transparent 55%), radial-gradient(90% 80% at 95% 100%, rgba(201,159,51,0.14) 0, transparent 50%)",
+              "repeating-linear-gradient(90deg, transparent 0 46px, rgba(203,182,138,0.05) 46px 47px)",
           }}
-          aria-hidden
         />
-        {/* Tanpura drone strings — faint vertical threads, the constant backdrop of the raga */}
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(90deg, transparent 0 43px, rgba(201,159,51,0.12) 43px 44px)",
-          }}
-          aria-hidden
-        />
-        {/* Tanpura — the drone instrument, its strings resonating on the stage */}
-        <TanpuraArt className="pointer-events-none absolute -right-6 top-1/2 h-[27rem] w-auto -translate-y-1/2 text-[#e7c86a]/75 sm:right-2" />
-        {/* Meend — a vocal glide between two swaras, drawn faint like sound in the air */}
-        <svg
-          className="pointer-events-none absolute inset-x-0 bottom-28 h-44 w-full"
-          viewBox="0 0 400 180"
-          preserveAspectRatio="none"
-          fill="none"
-          aria-hidden
-        >
-          <path
-            d="M-10 150 C 70 60 150 60 210 110 S 340 170 420 80"
-            stroke="#c99f33"
-            strokeOpacity="0.3"
-            strokeWidth="2"
-            strokeLinecap="round"
+        {/* Sitar at the boundary, sitting high on the stage */}
+        <SitarArt className="absolute bottom-[8%] left-[40%] h-[86%] w-auto -translate-x-1/2 rotate-[6deg] text-[#c9b48c]/65" />
+        {/* Gold particles + a single rising note, restrained */}
+        {[
+          { top: "34%", left: "10%", s: 1.5 },
+          { top: "60%", left: "33%", s: 2 },
+          { top: "72%", left: "16%", s: 1.5 },
+          { top: "26%", left: "25%", s: 1 },
+        ].map((d, i) => (
+          <span
+            key={i}
+            className="absolute rounded-full bg-[#d8c8a4]/35"
+            style={{
+              top: d.top,
+              left: d.left,
+              width: `${d.s * 2}px`,
+              height: `${d.s * 2}px`,
+            }}
           />
-          <circle cx="18" cy="132" r="3" fill="#c99f33" fillOpacity="0.5" />
-          <circle cx="404" cy="88" r="3" fill="#c99f33" fillOpacity="0.5" />
-        </svg>
+        ))}
+        {/* Notes drifting up through the room — spread thin, kept clear of the
+            headline and the counter so they read as air, not decoration. */}
+        {[
+          { glyph: "♪", top: "66%", left: "9%", size: "1.25rem", op: 0.35, dur: "7.5s", delay: "1.4s" },
+          { glyph: "♫", top: "24%", left: "17%", size: "1rem", op: 0.28, dur: "8.5s", delay: "0s" },
+          { glyph: "♩", top: "80%", left: "27%", size: "0.9rem", op: 0.22, dur: "9s", delay: "2.6s" },
+          { glyph: "♪", top: "13%", left: "31%", size: "0.85rem", op: 0.2, dur: "8s", delay: "3.4s" },
+          { glyph: "♬", top: "38%", left: "6%", size: "1.05rem", op: 0.26, dur: "10s", delay: "0.8s" },
+          { glyph: "♪", top: "52%", left: "35%", size: "0.8rem", op: 0.18, dur: "9.5s", delay: "4.2s" },
+        ].map((n, i) => (
+          <span
+            key={i}
+            className="mksm-note absolute font-display leading-none"
+            style={{
+              top: n.top,
+              left: n.left,
+              fontSize: n.size,
+              // The float keyframes drive `opacity`, so per-note weight has to
+              // live in the colour instead.
+              color: `rgba(216,200,164,${n.op})`,
+              animationDuration: n.dur,
+              animationDelay: n.delay,
+            }}
+          >
+            {n.glyph}
+          </span>
+        ))}
+      </div>
+
+      {/* Classic ivory — full-bleed, clipped to the wave so it meets the dark on
+          the centre line and the single boundary can cross 50/50. */}
+      <div
+        className="mksm-ivory-classic pointer-events-none absolute inset-0 z-0 bg-surface"
+        style={{ clipPath: "url(#mksm-wave)" }}
+        aria-hidden
+      />
+
+      {/* Classic-only decor (desktop). Full-bleed and clipped to the same wave
+          as the ivory, so the ribbon can only ever start at the boundary — no
+          part of it survives on the dark side. */}
+      <div
+        className="mksm-classic-decor pointer-events-none absolute inset-0 z-0"
+        style={{ clipPath: "url(#mksm-wave)" }}
+        aria-hidden
+      >
+        {/* Soft champagne spotlight behind the form. */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "radial-gradient(23% 42% at 80% 46%, rgba(214,199,163,0.10) 0, transparent 70%)",
+          }}
+        />
+        {/* The phrase lifting off the divider and fading out over the middle of
+            the ivory panel's top edge. */}
+        <StaffRibbon
+          className="absolute -top-[5%] left-[46%] h-[19%] w-[34%] text-[#c4ad7e]/80"
+          lines={7}
+        />
+        {/* A few tiny, restrained notes riding the ribbon */}
+        {[
+          { glyph: "♪", top: "9%", left: "52%", size: "1.35rem", dur: "7s", delay: "0s" },
+          { glyph: "♫", top: "6.5%", left: "57%", size: "1.05rem", dur: "6.5s", delay: "1s" },
+          { glyph: "♩", top: "3.5%", left: "62%", size: "0.9rem", dur: "7.5s", delay: "2.1s" },
+        ].map((n, i) => (
+          <span
+            key={i}
+            className="mksm-note absolute font-display text-[#c4ad7e]/55"
+            style={{
+              top: n.top,
+              left: n.left,
+              fontSize: n.size,
+              animationDuration: n.dur,
+              animationDelay: n.delay,
+            }}
+          >
+            {n.glyph}
+          </span>
+        ))}
+        {/* Bottom-right corner: paper that got wet and dried, tide lines and all */}
+        <WaterStain className="absolute bottom-0 right-0 h-[38%] w-[20%]" />
+      </div>
+
+      {/* ── Classic stage content (transparent, sitting over the dark) ── */}
+      <section className="mksm-stage mksm-stage-classic relative z-10 flex-col justify-between overflow-hidden p-10 text-white">
         <Brand
           className="relative [&_span]:text-white"
           subtitle="Mahesh Kale School of Music"
@@ -178,7 +291,10 @@ export default function LoginPage() {
       </section>
 
       {/* ── Form panel — shared across all stages ── */}
-      <section className="relative flex flex-col bg-surface lg:items-center lg:justify-center lg:px-6 lg:py-12">
+      <section className="relative flex flex-col overflow-hidden lg:items-center lg:justify-center lg:px-6 lg:py-12">
+        {/* Ivory background. Plain for mobile + Raga/Studio; clipped to the wave
+            for Classic desktop so the single dark boundary shows through. */}
+        <div className="mksm-ivory pointer-events-none absolute inset-0 bg-surface" aria-hidden />
         <div className="absolute right-4 top-4 z-10">
           <LayoutSwitcher />
         </div>
@@ -267,7 +383,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <div className="w-full max-w-sm px-6 pb-14 pt-9 lg:p-0">
+        <div className="relative z-10 w-full max-w-sm px-6 pb-14 pt-9 lg:p-0">
           <SignInForm />
         </div>
       </section>

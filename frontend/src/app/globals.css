@@ -426,6 +426,42 @@
   100% { transform: translateY(-14px) scale(1.35); opacity: 0; }
 }
 
+/* Sitar — the strings keep breathing after the pluck, sound lifts off the
+   bridge, and a phrase drifts away from the instrument into the room. */
+.mksm-sitar-string {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mksm-string 3.4s ease-in-out infinite;
+}
+.mksm-sitar-string:nth-child(2) { animation-delay: -0.8s; }
+.mksm-sitar-string:nth-child(3) { animation-delay: -1.5s; }
+.mksm-sitar-string:nth-child(4) { animation-delay: -2.2s; }
+.mksm-sitar-string:nth-child(5) { animation-delay: -2.9s; }
+
+.mksm-sitar-wave {
+  transform-box: fill-box;
+  transform-origin: 0% 100%;
+  animation: mksm-sitar-lift 7s ease-out infinite;
+}
+.mksm-sitar-waves .mksm-sitar-wave:nth-child(2) { animation-delay: -2.4s; }
+.mksm-sitar-waves .mksm-sitar-wave:nth-child(3) { animation-delay: -4.7s; }
+@keyframes mksm-sitar-lift {
+  0% { transform: translate(0, 0) scale(0.9); opacity: 0; }
+  25% { opacity: 0.55; }
+  100% { transform: translate(14px, -24px) scale(1.15); opacity: 0; }
+}
+
+.mksm-sitar-drift {
+  stroke-dasharray: 26 240;
+  animation: mksm-sitar-drift 11s linear infinite;
+}
+.mksm-sitar-drift:nth-child(2) { animation-delay: -3.6s; }
+.mksm-sitar-drift:nth-child(3) { animation-delay: -7.2s; }
+@keyframes mksm-sitar-drift {
+  from { stroke-dashoffset: 266; }
+  to { stroke-dashoffset: 0; }
+}
+
 /*
   Raga identity — distinct from Classic on purpose. Where Classic is the still,
   warm drone (tanpura + taal + grain), Raga is melody in motion: the sargam
@@ -476,6 +512,34 @@
   }
 }
 
+/* Classic-only login decor — shown only for the Classic theme, desktop up. */
+.mksm-classic-decor { display: none; }
+@media (min-width: 1024px) {
+  :root[data-theme="classic"] .mksm-classic-decor { display: block; }
+}
+
+/* Classic login boundary. The dark stage is ONE full-bleed element whose wavy
+   right edge is the only divider; the ivory form panel is clipped to the
+   matching wave so there is a single, continuous boundary (no straight seam,
+   no middle band). The plain ivory covers everything except Classic desktop. */
+.mksm-classic-bg { display: none; }
+.mksm-ivory-classic { display: none; }
+@media (min-width: 1024px) {
+  :root[data-theme="classic"] .mksm-classic-bg { display: block; }
+  :root[data-theme="classic"] .mksm-ivory { display: none; }
+  :root[data-theme="classic"] .mksm-ivory-classic { display: block; }
+}
+
+/* Floating notes — a slow, gentle drift on the login form side. */
+.mksm-note {
+  animation: mksm-note-float 6s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+@keyframes mksm-note-float {
+  0%, 100% { transform: translateY(0) rotate(-5deg); opacity: 0.55; }
+  50% { transform: translateY(-16px) rotate(5deg); opacity: 1; }
+}
+
 /* Raga aroha — the ascending scale climbing the stage, each swara lit in turn. */
 .mksm-aroha-swara {
   color: color-mix(in srgb, var(--color-saffron-300) 20%, transparent);
@@ -493,12 +557,17 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .mksm-note { animation: none; }
   .mksm-aroha-swara { animation: none; }
   .mksm-skeleton { animation: none; }
   .mksm-marquee-track { animation: none; }
   .mksm-tanpura-string,
   .mksm-tanpura-wave { animation: none; opacity: 1; }
   .mksm-tanpura-wave { opacity: 0; }
+  .mksm-sitar-string,
+  .mksm-sitar-drift { animation: none; }
+  .mksm-sitar-drift { stroke-dasharray: none; }
+  .mksm-sitar-wave { animation: none; opacity: 0; }
   .mksm-sargam-swara { animation: none; }
   .mksm-sargam-swara:first-child { color: var(--color-brand-600); }
   * { scroll-behavior: auto !important; }

@@ -7,6 +7,10 @@ import {
   ChalkboardTeacher,
   ShieldStar,
   Warning,
+  User,
+  Lock,
+  Eye,
+  EyeSlash,
 } from "@phosphor-icons/react";
 import type { Role } from "@/data/types";
 import { ButtonLink, Button } from "@/components/ui/button";
@@ -37,6 +41,7 @@ const roleEntries = [
 export function SignInForm() {
   const router = useRouter();
   const [identifier, setIdentifier] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   function handleSubmit(e: React.FormEvent) {
@@ -61,26 +66,50 @@ export function SignInForm() {
 
       <form className="mt-6 space-y-4" onSubmit={handleSubmit} aria-label="Sign in">
         <Field label="MKSM number or email" htmlFor="identifier">
-          <Input
-            id="identifier"
-            name="identifier"
-            autoComplete="username"
-            placeholder="100428 or you@example.com"
-            value={identifier}
-            onChange={(e) => {
-              setIdentifier(e.target.value);
-              setError(null);
-            }}
-          />
+          <div className="relative">
+            <User
+              size={18}
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-400"
+              aria-hidden
+            />
+            <Input
+              id="identifier"
+              name="identifier"
+              autoComplete="username"
+              placeholder="100428 or you@example.com"
+              className="pl-10"
+              value={identifier}
+              onChange={(e) => {
+                setIdentifier(e.target.value);
+                setError(null);
+              }}
+            />
+          </div>
         </Field>
         <Field label="Password" htmlFor="password">
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            placeholder="••••••••"
-          />
+          <div className="relative">
+            <Lock
+              size={18}
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-400"
+              aria-hidden
+            />
+            <Input
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="current-password"
+              placeholder="••••••••"
+              className="px-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              className="absolute right-2 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-md text-ink-400 hover:text-ink-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
+            >
+              {showPassword ? <EyeSlash size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         </Field>
 
         <div className="flex items-center justify-between text-sm">

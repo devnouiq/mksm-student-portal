@@ -14,10 +14,10 @@
     "command": "./init.sh",
     "checks": [
       "npm --prefix frontend install",
-      "npm --prefix frontend test (vitest — 34 unit tests)",
+      "npm --prefix frontend test (vitest — 44 unit tests)",
       "npm --prefix frontend run build (types + lint + prerender all 36 routes)"
     ],
-    "last_result": "PASS — 34/34 unit tests green; 36 routes prerendered, no type/lint errors"
+    "last_result": "PASS — 44/44 unit tests green; 36 routes prerendered, no type/lint errors"
   },
   "engineering_gates": {
     "workflow": "Followed .agents/skills/engineering-workflow on 2026-08-24.",
@@ -48,40 +48,236 @@
       "status": "done",
       "evidence": "frontend/src/app/login/{page,sign-in-form}.tsx. Prototype sign-in routes each demo identity (100428/500112/900001) to its role Overview; role shortcut buttons also present."
     },
-
-    { "id": "student-overview", "title": "Student Overview", "role": "student", "status": "done", "evidence": "frontend/src/app/student/overview/page.tsx + loading.tsx. StudentRepository.getOverview()." },
-    { "id": "student-courses", "title": "My Courses (progress, attendance, Join/Continue, Homework, Request Recording; Practice tab)", "role": "student", "status": "done", "evidence": "frontend/src/app/student/courses/page.tsx. getCourses() + getPracticeMaterial()." },
-    { "id": "student-practice", "title": "Practice Material (Audio by pitch / Video / PDF tabs)", "role": "student", "status": "done", "evidence": "frontend/src/app/student/practice/page.tsx. getPracticeMaterial()." },
-    { "id": "student-homework", "title": "Submit Homework (class-date, ≥2-day cutoff, Late tag, upload) + Check Feedback", "role": "student", "status": "done", "evidence": "frontend/src/app/student/homework/{page,homework-submit-form}.tsx. getHomework()." },
-    { "id": "student-sankalp", "title": "Sankalp Leaderboard (Top Students / Batches / 600 Hours Club)", "role": "student", "status": "done", "evidence": "frontend/src/app/student/sankalp/page.tsx. leaderboard.getLeaderboard()." },
-    { "id": "student-payments", "title": "Payment & Fees (read-only status, re-activate, change method)", "role": "student", "status": "done", "evidence": "frontend/src/app/student/payments/page.tsx. getPayments()." },
-    { "id": "student-explore", "title": "Explore Other Courses (Enroll / Learn More)", "role": "student", "status": "done", "evidence": "frontend/src/app/student/explore/page.tsx. getCatalog()." },
-    { "id": "student-calendar", "title": "Holiday Calendar 2026", "role": "student", "status": "done", "evidence": "frontend/src/app/student/calendar/page.tsx. getHolidays()." },
-    { "id": "student-help", "title": "Help Section (Tutorials / FAQs / Support)", "role": "student", "status": "done", "evidence": "frontend/src/app/student/help/page.tsx. getHelp()." },
-    { "id": "student-policy", "title": "MKSM Policy (static)", "role": "student", "status": "done", "evidence": "frontend/src/app/student/policy/page.tsx. Placeholder policy text per PRD §12.11." },
-
-    { "id": "teacher-overview", "title": "Teacher Overview (announcements, homework/class stats, DEA alerts, class-log reminder, Sankalp)", "role": "teacher", "status": "done", "evidence": "frontend/src/app/teacher/overview/page.tsx. teacher.getOverview()." },
-    { "id": "teacher-batches", "title": "Classes / My Batches (Start Class / Homework / Attendance)", "role": "teacher", "status": "done", "evidence": "frontend/src/app/teacher/batches/page.tsx. getBatches()." },
-    { "id": "teacher-homework", "title": "Check Homework (filters, audio player, Give Feedback)", "role": "teacher", "status": "done", "evidence": "frontend/src/app/teacher/homework/{page,homework-queue}.tsx. getHomeworkQueue()." },
-    { "id": "teacher-practice", "title": "Practice Material (admin-shared + own uploads, share to batch)", "role": "teacher", "status": "done", "evidence": "frontend/src/app/teacher/practice/page.tsx. getPracticeMaterial()." },
-    { "id": "teacher-schedule", "title": "Class Schedule (read-only)", "role": "teacher", "status": "done", "evidence": "frontend/src/app/teacher/schedule/page.tsx. getSchedule()." },
-    { "id": "teacher-attendance", "title": "Attendance (auto Present Online + review/adjust)", "role": "teacher", "status": "done", "evidence": "frontend/src/app/teacher/attendance/{page,attendance-table}.tsx. getAttendance()." },
-    { "id": "teacher-class-log", "title": "Class Log (submit form + history)", "role": "teacher", "status": "done", "evidence": "frontend/src/app/teacher/class-log/{page,class-log-form}.tsx. getClassLog()." },
-    { "id": "teacher-sankalp", "title": "Sankalp Leaderboard (teacher view)", "role": "teacher", "status": "done", "evidence": "frontend/src/app/teacher/sankalp/page.tsx. leaderboard.getLeaderboard()." },
-    { "id": "teacher-announcements", "title": "Announcements (unread, mark-all-read)", "role": "teacher", "status": "done", "evidence": "frontend/src/app/teacher/announcements/page.tsx. getAnnouncements()." },
-
-    { "id": "admin-overview", "title": "Admin Overview (announcements, Razorpay/PayPal breakdown, Sankalp, batch mgmt)", "role": "admin", "status": "done", "evidence": "frontend/src/app/admin/overview/page.tsx. admin.getOverview()." },
-    { "id": "admin-batches", "title": "Manage Classes / Batches (students, Zoom, change teacher)", "role": "admin", "status": "done", "evidence": "frontend/src/app/admin/batches/page.tsx. getBatches()." },
-    { "id": "admin-students", "title": "Active Students directory (searchable)", "role": "admin", "status": "done", "evidence": "frontend/src/app/admin/students/{page,student-directory}.tsx. getStudents()." },
-    { "id": "admin-practice", "title": "Practice Material master library (upload / share)", "role": "admin", "status": "done", "evidence": "frontend/src/app/admin/practice/page.tsx. getPracticeLibrary()." },
-    { "id": "admin-class-log", "title": "Class Log (all logs, filter by teacher/batch, edit)", "role": "admin", "status": "done", "evidence": "frontend/src/app/admin/class-log/{page,class-log-table}.tsx. getClassLogs()." },
-    { "id": "admin-add-student", "title": "Add Student form", "role": "admin", "status": "done", "evidence": "frontend/src/app/admin/add-student/{page,add-student-form}.tsx. getFormOptions()." },
-    { "id": "admin-add-teacher", "title": "Add Teacher form", "role": "admin", "status": "done", "evidence": "frontend/src/app/admin/add-teacher/{page,add-teacher-form}.tsx. getFormOptions()." },
-    { "id": "admin-manage-batches", "title": "Add / Manage Batches (form + list, static Zoom link)", "role": "admin", "status": "done", "evidence": "frontend/src/app/admin/manage-batches/{page,batch-form}.tsx. getBatches() + getFormOptions()." },
-    { "id": "admin-subscriptions", "title": "Manage Subscription (read-only sync, filters, payment counts)", "role": "admin", "status": "done", "evidence": "frontend/src/app/admin/subscriptions/{page,subscriptions-table}.tsx. getSubscriptions()." },
-    { "id": "admin-whatsapp", "title": "Manage WhatsApp (connection + templates)", "role": "admin", "status": "done", "evidence": "frontend/src/app/admin/whatsapp/page.tsx. Static config screen per PRD §12.7." },
-    { "id": "admin-announcements", "title": "Announcements (create + share audience, manage/remove)", "role": "admin", "status": "done", "evidence": "frontend/src/app/admin/announcements/{page,announcement-form,manage-list}.tsx. getAnnouncements() + getFormOptions()." },
-
-    { "id": "layout-variants", "title": "Layout variants — 3 switchable UX shells (Classic sidebar / Raga top-nav / Studio icon-rail) for design-direction review", "role": "shared", "status": "done", "evidence": "frontend/src/components/layout/portal-chrome.tsx dispatches to shells/{classic,raga,studio}-shell.tsx by the active variant on <html data-theme>; each shell is a distinct information architecture (persistent left sidebar / horizontal top-nav with sargam ribbon + centred editorial column / floating translucent icon-rail + Cmd-K command palette), not a recolour. Palette+type per variant in globals.css :root[data-theme] blocks (Classic MKSM-red serif / Raga night-indigo+marigold Fraunces / Studio Apple-blue Inter). Switcher: frontend/src/components/layout/layout-switcher.tsx; variant model + no-FOUC pre-paint script + isThemeId guard: frontend/src/config/theme.ts (tested, frontend/src/config/theme.test.ts). Built with apple-design (Studio) + frontend-design/redesign-skill (top-nav over sidebar; night-raga palette grounded in the subject, not the terracotta-cream default). Verified in-browser: all 3 shells render across student/admin + login, switch persists via localStorage, Cmd-K filters+navigates, mobile drawers, clean console, 34 tests + build green. Accepted tradeoff: dispatcher renders Classic on SSR/first paint then swaps to the stored shell after mount (colors are correct instantly via the pre-paint script; nav structure reflows once for non-classic viewers) — an SSR-inlined variant (e.g. cookie) would remove the reflow in M2." }
+    {
+      "id": "student-overview",
+      "title": "Student Overview",
+      "role": "student",
+      "status": "done",
+      "evidence": "frontend/src/app/student/overview/page.tsx + loading.tsx. StudentRepository.getOverview()."
+    },
+    {
+      "id": "student-courses",
+      "title": "My Courses (progress, attendance, Join/Continue, Homework, Request Recording; Practice tab)",
+      "role": "student",
+      "status": "done",
+      "evidence": "frontend/src/app/student/courses/page.tsx. getCourses() + getPracticeMaterial()."
+    },
+    {
+      "id": "student-practice",
+      "title": "Practice Material (Audio by pitch / Video / PDF tabs)",
+      "role": "student",
+      "status": "done",
+      "evidence": "frontend/src/app/student/practice/page.tsx. getPracticeMaterial()."
+    },
+    {
+      "id": "student-homework",
+      "title": "Submit Homework (class-date, ≥2-day cutoff, Late tag, upload) + Check Feedback",
+      "role": "student",
+      "status": "done",
+      "evidence": "frontend/src/app/student/homework/{page,homework-submit-form}.tsx. getHomework()."
+    },
+    {
+      "id": "student-sankalp",
+      "title": "Sankalp Leaderboard (Top Students / Batches / 600 Hours Club)",
+      "role": "student",
+      "status": "done",
+      "evidence": "frontend/src/app/student/sankalp/page.tsx. leaderboard.getLeaderboard()."
+    },
+    {
+      "id": "student-payments",
+      "title": "Payment & Fees (read-only status, re-activate, change method)",
+      "role": "student",
+      "status": "done",
+      "evidence": "frontend/src/app/student/payments/page.tsx. getPayments()."
+    },
+    {
+      "id": "student-explore",
+      "title": "Explore Other Courses (Enroll / Learn More)",
+      "role": "student",
+      "status": "done",
+      "evidence": "frontend/src/app/student/explore/page.tsx. getCatalog()."
+    },
+    {
+      "id": "student-calendar",
+      "title": "Holiday Calendar 2026",
+      "role": "student",
+      "status": "done",
+      "evidence": "frontend/src/app/student/calendar/page.tsx. getHolidays()."
+    },
+    {
+      "id": "student-help",
+      "title": "Help Section (Tutorials / FAQs / Support)",
+      "role": "student",
+      "status": "done",
+      "evidence": "frontend/src/app/student/help/page.tsx. getHelp()."
+    },
+    {
+      "id": "student-policy",
+      "title": "MKSM Policy (static)",
+      "role": "student",
+      "status": "done",
+      "evidence": "frontend/src/app/student/policy/page.tsx. Placeholder policy text per PRD §12.11."
+    },
+    {
+      "id": "teacher-overview",
+      "title": "Teacher Overview (announcements, homework/class stats, DEA alerts, class-log reminder, Sankalp)",
+      "role": "teacher",
+      "status": "done",
+      "evidence": "frontend/src/app/teacher/overview/page.tsx. teacher.getOverview()."
+    },
+    {
+      "id": "teacher-batches",
+      "title": "Classes / My Batches (Start Class / Homework / Attendance)",
+      "role": "teacher",
+      "status": "done",
+      "evidence": "frontend/src/app/teacher/batches/page.tsx. getBatches()."
+    },
+    {
+      "id": "teacher-homework",
+      "title": "Check Homework (filters, audio player, Give Feedback)",
+      "role": "teacher",
+      "status": "done",
+      "evidence": "frontend/src/app/teacher/homework/{page,homework-queue}.tsx. getHomeworkQueue()."
+    },
+    {
+      "id": "teacher-practice",
+      "title": "Practice Material (admin-shared + own uploads, share to batch)",
+      "role": "teacher",
+      "status": "done",
+      "evidence": "frontend/src/app/teacher/practice/page.tsx. getPracticeMaterial()."
+    },
+    {
+      "id": "teacher-schedule",
+      "title": "Class Schedule (read-only)",
+      "role": "teacher",
+      "status": "done",
+      "evidence": "frontend/src/app/teacher/schedule/page.tsx. getSchedule()."
+    },
+    {
+      "id": "teacher-attendance",
+      "title": "Attendance (auto Present Online + review/adjust)",
+      "role": "teacher",
+      "status": "done",
+      "evidence": "frontend/src/app/teacher/attendance/{page,attendance-table}.tsx. getAttendance()."
+    },
+    {
+      "id": "teacher-class-log",
+      "title": "Class Log (submit form + history)",
+      "role": "teacher",
+      "status": "done",
+      "evidence": "frontend/src/app/teacher/class-log/{page,class-log-form}.tsx. getClassLog()."
+    },
+    {
+      "id": "teacher-sankalp",
+      "title": "Sankalp Leaderboard (teacher view)",
+      "role": "teacher",
+      "status": "done",
+      "evidence": "frontend/src/app/teacher/sankalp/page.tsx. leaderboard.getLeaderboard()."
+    },
+    {
+      "id": "teacher-announcements",
+      "title": "Announcements (unread, mark-all-read)",
+      "role": "teacher",
+      "status": "done",
+      "evidence": "frontend/src/app/teacher/announcements/page.tsx. getAnnouncements()."
+    },
+    {
+      "id": "admin-overview",
+      "title": "Admin Overview (announcements, Razorpay/PayPal breakdown, Sankalp, batch mgmt)",
+      "role": "admin",
+      "status": "done",
+      "evidence": "frontend/src/app/admin/overview/page.tsx. admin.getOverview()."
+    },
+    {
+      "id": "admin-batches",
+      "title": "Manage Classes / Batches (students, Zoom, change teacher)",
+      "role": "admin",
+      "status": "done",
+      "evidence": "frontend/src/app/admin/batches/page.tsx. getBatches()."
+    },
+    {
+      "id": "admin-students",
+      "title": "Active Students directory (searchable)",
+      "role": "admin",
+      "status": "done",
+      "evidence": "frontend/src/app/admin/students/{page,student-directory}.tsx. getStudents()."
+    },
+    {
+      "id": "admin-practice",
+      "title": "Practice Material master library (upload / share)",
+      "role": "admin",
+      "status": "done",
+      "evidence": "frontend/src/app/admin/practice/page.tsx. getPracticeLibrary()."
+    },
+    {
+      "id": "admin-class-log",
+      "title": "Class Log (all logs, filter by teacher/batch, edit)",
+      "role": "admin",
+      "status": "done",
+      "evidence": "frontend/src/app/admin/class-log/{page,class-log-table}.tsx. getClassLogs()."
+    },
+    {
+      "id": "admin-add-student",
+      "title": "Add Student form",
+      "role": "admin",
+      "status": "done",
+      "evidence": "frontend/src/app/admin/add-student/{page,add-student-form}.tsx. getFormOptions()."
+    },
+    {
+      "id": "admin-add-teacher",
+      "title": "Add Teacher form",
+      "role": "admin",
+      "status": "done",
+      "evidence": "frontend/src/app/admin/add-teacher/{page,add-teacher-form}.tsx. getFormOptions()."
+    },
+    {
+      "id": "admin-manage-batches",
+      "title": "Add / Manage Batches (form + list, static Zoom link)",
+      "role": "admin",
+      "status": "done",
+      "evidence": "frontend/src/app/admin/manage-batches/{page,batch-form}.tsx. getBatches() + getFormOptions()."
+    },
+    {
+      "id": "admin-subscriptions",
+      "title": "Manage Subscription (read-only sync, filters, payment counts)",
+      "role": "admin",
+      "status": "done",
+      "evidence": "frontend/src/app/admin/subscriptions/{page,subscriptions-table}.tsx. getSubscriptions()."
+    },
+    {
+      "id": "admin-whatsapp",
+      "title": "Manage WhatsApp (connection + templates)",
+      "role": "admin",
+      "status": "done",
+      "evidence": "frontend/src/app/admin/whatsapp/page.tsx. Static config screen per PRD §12.7."
+    },
+    {
+      "id": "admin-announcements",
+      "title": "Announcements (create + share audience, manage/remove)",
+      "role": "admin",
+      "status": "done",
+      "evidence": "frontend/src/app/admin/announcements/{page,announcement-form,manage-list}.tsx. getAnnouncements() + getFormOptions()."
+    },
+    {
+      "id": "layout-variants",
+      "title": "Layout variants — 3 switchable UX shells (Classic sidebar / Raga top-nav / Studio icon-rail) for design-direction review",
+      "role": "shared",
+      "status": "done",
+      "evidence": "frontend/src/components/layout/portal-chrome.tsx dispatches to shells/{classic,raga,studio}-shell.tsx by the active variant on <html data-theme>; each shell is a distinct information architecture (persistent left sidebar / horizontal top-nav with sargam ribbon + centred editorial column / floating translucent icon-rail + Cmd-K command palette), not a recolour. Palette+type per variant in globals.css :root[data-theme] blocks (Classic MKSM-red serif / Raga night-indigo+marigold Fraunces / Studio Apple-blue Inter). Switcher: frontend/src/components/layout/layout-switcher.tsx; variant model + no-FOUC pre-paint script + isThemeId guard: frontend/src/config/theme.ts (tested, frontend/src/config/theme.test.ts). Built with apple-design (Studio) + frontend-design/redesign-skill (top-nav over sidebar; night-raga palette grounded in the subject, not the terracotta-cream default). Verified in-browser: all 3 shells render across student/admin + login, switch persists via localStorage, Cmd-K filters+navigates, mobile drawers, clean console, 34 tests + build green. Accepted tradeoff: dispatcher renders Classic on SSR/first paint then swaps to the stored shell after mount (colors are correct instantly via the pre-paint script; nav structure reflows once for non-classic viewers) — an SSR-inlined variant (e.g. cookie) would remove the reflow in M2."
+    },
+    {
+      "id": "m1-client-feedback-r2",
+      "title": "Client feedback round 2 — progress consistency, announcement edit/rich-text/popup, MKSM personality on favored shells",
+      "role": "shared",
+      "status": "done",
+      "evidence": "1) Progress consistency (student): the ongoing weekly batch class showed 100% on Overview but 62% under My Classes. Extracted the rule to a pure helper frontend/src/domain/course.ts:displayProgress (ongoing→100%, else raw fraction), now the single source for both frontend/src/app/student/overview/page.tsx and frontend/src/app/student/courses/page.tsx so they cannot drift again. Tested frontend/src/domain/course.test.ts (3 tests). Verified in-browser: My Classes now reads 100%. 2) Announcements Edit (admin): frontend/src/app/admin/announcements/manage-list.tsx gained an Edit button beside Remove, opening an in-place edit dialog (title+body) that updates the item without delete-and-recreate (prototype: local state). 3) Rich text + read popup (admin): announcement text supports **bold** and *italic* via a pure, injection-safe parser frontend/src/domain/rich-text.ts (tokens rendered as React children by frontend/src/components/ui/rich-text.tsx — no dangerouslySetInnerHTML, no HTML sink) tested frontend/src/domain/rich-text.test.ts (7 tests, incl. a <script> stays-literal case). The Manage list now shows title + plain-text preview only; clicking the title opens the full formatted body in a dialog (frontend/src/components/ui/modal.tsx — Escape/backdrop close, role=dialog). Format hint added to the create + edit forms; student Announcements panel renders the same formatting. Demo markers added to two admin mock announcements. 4) MKSM personality (theme feedback, favored shells Classic+Raga): a 'sur rekha' signature — a sam-marked accent rule under every page title (frontend/src/components/layout/page-header.tsx + .mksm-sur-rule in globals.css), token-tinted per theme (Classic red→saffron, Raga saffron→indigo), hidden on Studio to keep it minimal; plus font-optical-sizing + size-specific display tracking on the editorial serifs. Verified in-browser on Classic and Raga. Presented as a first creative pass for review.",
+      "gates": {
+        "tdd": "44 unit tests green (+10: course 3, rich-text 7). Failure/edge paths covered (ongoing missing flag, unmatched marker, HTML-as-literal).",
+        "solid": "Progress + rich-text rules are pure and framework-free; UI depends on them, not vice-versa. RichText/Modal are single-responsibility primitives.",
+        "secure_by_default": "No injection surface: rich text is placed as React children (auto-escaped), verified by test; no dangerouslySetInnerHTML added; no new deps; no network/secrets; role isolation untouched.",
+        "production_readiness": "UI prototype — Edit/Remove are local-state only (consistent with the existing M1 mock waiver); wired to endpoints in M2. Build + types + lint clean.",
+        "verification": "tsc clean, build green (36 routes), 44/44 tests, in-browser proof for all four items."
+      }
+    }
   ]
 }

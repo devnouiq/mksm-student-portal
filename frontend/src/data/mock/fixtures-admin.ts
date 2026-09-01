@@ -18,14 +18,14 @@ export const adminAnnouncements: Announcement[] = [
   {
     id: "aa-1",
     title: "Diwali break schedule published",
-    body: "Classes pause 8–12 Nov. Shared with all students and teachers.",
+    body: "Classes pause **8–12 Nov**. Shared with _all students and teachers_.",
     postedAt: inDays(-1, 9),
     read: false,
   },
   {
     id: "aa-2",
     title: "New Advanced Khayal batch open",
-    body: "Enrolment now open for the Advance Khayal Gayaki batch.",
+    body: "Enrolment now open for the **Advance Khayal Gayaki** batch.",
     postedAt: inDays(-3, 12),
     read: false,
   },

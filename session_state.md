@@ -1,6 +1,33 @@
 # Session State — MKSM Student Portal
 
-_Last updated: 2026-08-28_
+_Last updated: 2026-09-01_
+
+## Client feedback — round 2 (2026-09-01)
+
+Four review items, implemented exactly (nothing added beyond scope):
+
+1. **Progress consistency (student).** The ongoing weekly batch class read 100%
+   on Overview but 62% under My Classes. Rule extracted to a pure single source
+   `frontend/src/domain/course.ts` (`displayProgress`), used by both pages so
+   they can't drift again. My Classes now shows 100% (verified in-browser).
+2. **Announcement Edit (admin).** Manage list gained an **Edit** button beside
+   Remove — an in-place edit dialog updates title/body without delete-recreate
+   (prototype: local state).
+3. **Rich text + read popup (admin).** Announcement text supports `**bold**` /
+   `*italic*` via an injection-safe parser (`frontend/src/domain/rich-text.ts`)
+   rendered as React children — no `dangerouslySetInnerHTML`. Manage list shows
+   title + plain preview only; clicking the title opens the full formatted body
+   in a dialog (`frontend/src/components/ui/modal.tsx`). Student panel renders
+   the same formatting; create + edit forms carry a format hint.
+4. **MKSM personality (theme feedback, favored shells Classic + Raga).** A
+   **sur rekha** signature — a sam-marked accent rule under every page title,
+   token-tinted per theme (Classic red→saffron, Raga saffron→indigo), hidden on
+   Studio to keep it minimal — plus optical sizing + size-specific tracking on
+   the editorial serifs. A first creative pass, offered for review.
+
+Gates: **44 unit tests** green (+10: course 3, rich-text 7 incl. an XSS
+stays-literal case), tsc clean, build green (36 routes), secure-code-review of
+the diff found no injection surface, in-browser proof for all four items.
 
 ## Layout variants (2026-08-28)
 

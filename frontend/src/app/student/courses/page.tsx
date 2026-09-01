@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CalendarBlank, ClipboardText, VideoCamera } from "@phosphor-icons/react/dist/ssr";
 import { getRepositories } from "@/data";
+import { displayProgress } from "@/domain/course";
 import { formatDate, toPercent } from "@/lib/format";
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -46,9 +47,9 @@ export default async function StudentCoursesPage() {
                   <div>
                     <p className="mb-1 text-xs font-medium text-ink-500">Course progress</p>
                     <div className="flex items-center gap-2">
-                      <Progress value={c.progress} label={`${c.courseName} progress`} />
+                      <Progress value={displayProgress(c)} label={`${c.courseName} progress`} />
                       <span className="text-xs font-medium text-ink-500">
-                        {toPercent(c.progress)}%
+                        {toPercent(displayProgress(c))}%
                       </span>
                     </div>
                   </div>

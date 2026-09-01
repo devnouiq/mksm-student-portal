@@ -7,6 +7,7 @@ import {
   VideoCamera,
 } from "@phosphor-icons/react/dist/ssr";
 import { getRepositories } from "@/data";
+import { displayProgress } from "@/domain/course";
 import { formatDate, formatHours, formatNumber, toPercent } from "@/lib/format";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -86,8 +87,7 @@ export default async function StudentOverviewPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               {data.courses.map((course) => {
-                // Ongoing weekly classes have no fixed end — always shown full.
-                const progress = course.ongoing ? 1 : course.progress;
+                const progress = displayProgress(course);
                 return (
                 <div
                   key={course.courseId}

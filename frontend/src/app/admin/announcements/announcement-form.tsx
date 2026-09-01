@@ -66,7 +66,11 @@ export function AnnouncementForm({ batches }: { batches: string[] }) {
         <Input id="an-title" name="title" required />
       </Field>
 
-      <Field label="Description" htmlFor="an-desc">
+      <Field
+        label="Description"
+        htmlFor="an-desc"
+        hint="Basic formatting: **bold** and *italic*."
+      >
         <Textarea id="an-desc" name="description" required />
       </Field>
 

@@ -196,6 +196,12 @@
 
   h1, h2, h3, .font-display {
     font-family: var(--font-display);
+    font-optical-sizing: auto;
+  }
+
+  /* Size-specific tracking: large display type reads too loose left as-is. */
+  h1, .font-display {
+    letter-spacing: -0.012em;
   }
 
   /* Visible, brand-tinted focus ring for keyboard users (a11y) */
@@ -243,6 +249,60 @@
 
 .mksm-marquee:hover .mksm-marquee-track {
   animation-play-state: paused;
+}
+
+/*
+  Sur rekha — the MKSM signature. A short accent rule under each page title
+  with a rotated "sam" marker at its head (the emphatic first beat of the taal).
+  Token-tinted, so each theme carries its own colour. A subtle, recurring nod to
+  the school's classical-music identity on every screen.
+*/
+.mksm-sur-rule {
+  display: block;
+  position: relative;
+  margin-top: 0.5rem;
+  width: 2.75rem;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--color-brand-600),
+    color-mix(in srgb, var(--color-saffron-500) 70%, transparent)
+  );
+}
+.mksm-sur-rule::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  transform: translateY(-50%) rotate(45deg);
+  background: var(--color-brand-600);
+}
+
+/* Raga wears the marigold thread first, resolving into indigo. */
+:root[data-theme="raga"] .mksm-sur-rule {
+  background: linear-gradient(
+    90deg,
+    var(--color-saffron-500),
+    color-mix(in srgb, var(--color-brand-600) 55%, transparent)
+  );
+}
+:root[data-theme="raga"] .mksm-sur-rule::before {
+  background: var(--color-saffron-500);
+}
+
+/* Studio stays deliberately minimal — no ornament. */
+:root[data-theme="studio"] .mksm-sur-rule {
+  display: none;
+}
+
+/* Editorial serifs get a touch tighter as they grow (Classic + Raga). */
+:root[data-theme="raga"] h1,
+:root[data-theme="raga"] .font-display {
+  letter-spacing: -0.016em;
 }
 
 /* Theme-scoped chrome accents (structure stays shared; only the finish changes). */

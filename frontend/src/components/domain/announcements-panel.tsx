@@ -5,6 +5,7 @@ import { CalendarBlank, Check } from "@phosphor-icons/react";
 import type { Announcement } from "@/data/types";
 import { formatDate } from "@/lib/format";
 import { Button } from "@/components/ui/button";
+import { RichText } from "@/components/ui/rich-text";
 
 /** Announcements list with a local "mark all read" (PRD §5.2/§5.3). */
 export function AnnouncementsPanel({
@@ -43,7 +44,9 @@ export function AnnouncementsPanel({
             />
             <div>
               <p className="text-sm font-medium text-ink-900">{a.title}</p>
-              <p className="text-sm text-muted-foreground">{a.body}</p>
+              <p className="text-sm text-muted-foreground">
+                <RichText text={a.body} />
+              </p>
               <p className="mt-0.5 flex items-center gap-1 text-xs text-ink-400">
                 <CalendarBlank size={12} /> {formatDate(a.postedAt)}
               </p>

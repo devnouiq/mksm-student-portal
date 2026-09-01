@@ -295,7 +295,7 @@ export default function LoginPage() {
         {/* Ivory background. Plain for mobile + Raga/Studio; clipped to the wave
             for Classic desktop so the single dark boundary shows through. */}
         <div className="mksm-ivory pointer-events-none absolute inset-0 bg-surface" aria-hidden />
-        <div className="absolute right-4 top-4 z-10">
+        <div className="absolute right-4 top-4 z-50">
           <LayoutSwitcher />
         </div>
         {/* Mobile hero — full-bleed branded header (the lg stage is hidden below

@@ -57,7 +57,7 @@ export function RagaShell({ role, user, children }: ShellProps) {
 
   return (
     <div className="mksm-raga flex min-h-screen flex-col">
-      {/* Ambient hall — dusk wash, sur-patti and the raga moving in the gutters */}
+      {/* Ambient hall — dusk wash, taal chakra left, tanpura strings right */}
       <RagaBackdrop />
       <header className="mksm-topbar sticky top-0 z-30 border-b border-border bg-surface/90 backdrop-blur">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-4 px-4 lg:px-8">

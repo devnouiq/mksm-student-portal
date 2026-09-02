@@ -34,11 +34,17 @@ export function AnnouncementsPanel({
       </div>
       <ul className="space-y-3">
         {items.map((a) => (
-          <li key={a.id} className="flex gap-3">
+          <li
+            key={a.id}
+            className={
+              "-mx-2 flex gap-3 rounded-md border-l-2 px-2 py-1.5 transition duration-200 hover:bg-brand-50/70 " +
+              (a.read ? "border-transparent" : "border-brand-300")
+            }
+          >
             <span
               className={
                 "mt-1.5 size-2 shrink-0 rounded-full " +
-                (a.read ? "bg-ink-200" : "bg-brand-500")
+                (a.read ? "bg-ink-200" : "bg-brand-500 ring-4 ring-brand-500/15")
               }
               aria-hidden
             />

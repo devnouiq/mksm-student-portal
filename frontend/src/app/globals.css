@@ -487,6 +487,50 @@
 :root[data-theme="raga"] body::after { display: none; }
 
 /*
+  Raga backdrop — the page as a hall at dusk rather than blank paper. The aroha
+  climbs the left gutter swara by swara and a slow alaap traces down the right,
+  settling on marigold rests. Motion is opacity/transform/dashoffset only, and
+  it all sits behind the content in the margins the reading column leaves free.
+*/
+.mksm-raga-swara {
+  color: color-mix(in srgb, var(--color-brand-600) 20%, transparent);
+  animation: mksm-raga-climb 5.6s ease-in-out infinite;
+}
+@keyframes mksm-raga-climb {
+  0%, 76%, 100% {
+    color: color-mix(in srgb, var(--color-brand-600) 20%, transparent);
+    transform: translateY(0);
+  }
+  10% {
+    color: color-mix(in srgb, var(--color-saffron-500) 80%, transparent);
+    transform: translateY(-3px);
+  }
+}
+
+/* The phrase draws itself down the gutter, then begins again. */
+.mksm-raga-alaap {
+  stroke-dasharray: 150 1750;
+  animation: mksm-raga-trace 19s linear infinite;
+}
+@keyframes mksm-raga-trace {
+  from { stroke-dashoffset: 1900; }
+  to { stroke-dashoffset: 0; }
+}
+
+/* Each rest breathes — the note held, not struck. */
+.mksm-raga-rest {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: mksm-raga-rest 6s ease-in-out infinite;
+}
+.mksm-raga-rest:nth-child(2) { animation-delay: -2s; }
+.mksm-raga-rest:nth-child(3) { animation-delay: -4s; }
+@keyframes mksm-raga-rest {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 0.85; transform: scale(1.15); }
+}
+
+/*
   Login stages — one per theme, structurally different (not a recolour). Each
   stage is rendered in the DOM; only the active theme's is shown, gated by
   data-theme so it stays server-rendered with the correct colours on first
@@ -570,5 +614,8 @@
   .mksm-sitar-wave { animation: none; opacity: 0; }
   .mksm-sargam-swara { animation: none; }
   .mksm-sargam-swara:first-child { color: var(--color-brand-600); }
+  .mksm-raga-swara { animation: none; }
+  .mksm-raga-alaap { animation: none; stroke-dasharray: none; }
+  .mksm-raga-rest { animation: none; opacity: 0.55; }
   * { scroll-behavior: auto !important; }
 }

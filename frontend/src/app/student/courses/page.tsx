@@ -7,9 +7,10 @@ import { formatDate, toPercent } from "@/lib/format";
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button, ButtonLink } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, IconTile } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tabs } from "@/components/ui/tabs";
+import { courseIcon } from "@/components/domain/course-icon";
 import { PracticeMaterialList } from "@/components/domain/practice-material-list";
 import { RequestRecordingButton } from "@/components/domain/request-recording-button";
 
@@ -26,10 +27,12 @@ export default async function StudentCoursesPage() {
   const coursesTab = (
     <div className="space-y-4">
       {courses.map((c) => (
-        <Card key={c.courseId}>
+        <Card key={c.courseId} interactive>
           <CardContent className="pt-5">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-              <div className="min-w-0">
+              <div className="flex min-w-0 gap-3">
+                <IconTile icon={courseIcon(c.courseName)} className="mt-0.5" />
+                <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="font-display text-lg text-ink-900">{c.courseName}</h3>
                   <Badge tone="neutral">{c.level}</Badge>
@@ -48,7 +51,7 @@ export default async function StudentCoursesPage() {
                     <p className="mb-1 text-xs font-medium text-ink-500">Course progress</p>
                     <div className="flex items-center gap-2">
                       <Progress value={displayProgress(c)} label={`${c.courseName} progress`} />
-                      <span className="text-xs font-medium text-ink-500">
+                      <span className="text-xs font-medium tabular-nums text-ink-500">
                         {toPercent(displayProgress(c))}%
                       </span>
                     </div>
@@ -57,11 +60,12 @@ export default async function StudentCoursesPage() {
                     <p className="mb-1 text-xs font-medium text-ink-500">Attendance</p>
                     <div className="flex items-center gap-2">
                       <Progress value={c.attendancePct} tone="saffron" label="Attendance" />
-                      <span className="text-xs font-medium text-ink-500">
+                      <span className="text-xs font-medium tabular-nums text-ink-500">
                         {toPercent(c.attendancePct)}%
                       </span>
                     </div>
                   </div>
+                </div>
                 </div>
               </div>
 

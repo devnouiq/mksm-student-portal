@@ -7,22 +7,30 @@ import {
   CalendarCheck,
   CheckCircle,
   GraduationCap,
-  MicrophoneStage,
+  Megaphone,
   MusicNoteSimple,
   MusicNotes,
-  PianoKeys,
+  Target,
   Timer,
   UserSound,
   VideoCamera,
+  Waveform,
 } from "@phosphor-icons/react/dist/ssr";
 import { getRepositories } from "@/data";
 import { displayProgress } from "@/domain/course";
 import { formatDate, formatHours, formatNumber, toPercent } from "@/lib/format";
 import { PageHeader } from "@/components/layout/page-header";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardMeta,
+  CardTitle,
+} from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { SubscriptionBadge } from "@/components/domain/subscription-badge";
+import { courseIcon } from "@/components/domain/course-icon";
 import { AlertMarquee } from "@/components/domain/alert-marquee";
 import { MessageFromMk } from "@/components/domain/message-from-mk";
 
@@ -30,17 +38,6 @@ export const metadata: Metadata = { title: "Overview" };
 
 function firstName(name: string) {
   return name.split(" ")[0];
-}
-
-/* Give each course a face: pick an instrument/voice icon from its name so the
-   list reads as music, not as generic rows. Falls back to a plain note. */
-const COURSE_ICONS: { match: RegExp; icon: Icon }[] = [
-  { match: /vocal|classical|khayal|raga|voice/i, icon: MicrophoneStage },
-  { match: /bhajan|light|devotional|abhang|semi/i, icon: MusicNotes },
-  { match: /harmonium|keyboard|piano|sur/i, icon: PianoKeys },
-];
-function courseIcon(name: string): Icon {
-  return COURSE_ICONS.find((c) => c.match.test(name))?.icon ?? MusicNoteSimple;
 }
 
 export default async function StudentOverviewPage() {
@@ -77,11 +74,13 @@ export default async function StudentOverviewPage() {
           suffix="hrs"
           tone="saffron"
           icon={Timer}
+          art="hours"
         />
         <StatTile
           label="Active courses"
           value={String(data.courses.length)}
           icon={GraduationCap}
+          art="courses"
         />
         <StatTile
           label="Renews in"
@@ -92,6 +91,7 @@ export default async function StudentOverviewPage() {
           }
           suffix={data.subscription.daysToRenew == null ? "" : "days"}
           icon={CalendarCheck}
+          art="renewal"
         />
       </div>
 
@@ -100,7 +100,10 @@ export default async function StudentOverviewPage() {
         <div className="space-y-6 lg:col-span-2">
           <Card>
             <CardHeader>
-              <CardTitle>Your courses</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <MusicNotes size={18} weight="duotone" className="text-brand-600" />
+                Your courses
+              </CardTitle>
               <Link
                 href="/student/courses"
                 className="inline-flex items-center gap-1 text-sm font-medium text-brand-700 hover:underline"
@@ -117,10 +120,31 @@ export default async function StudentOverviewPage() {
                 return (
                 <div
                   key={course.courseId}
-                  className="group flex flex-col gap-4 rounded-lg border border-border p-4 transition hover:border-brand-300 hover:shadow-card sm:flex-row sm:items-center"
+                  className={
+                    "group relative flex flex-col gap-4 overflow-hidden rounded-lg border p-4 transition duration-200 hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-card sm:flex-row sm:items-center " +
+                    (done
+                      ? "border-saffron-300/60 bg-saffron-100/30"
+                      : "border-border")
+                  }
                 >
+                  {/* the sur line down the left edge, drawn on hover — the same
+                      gesture the stat tiles use along their bottom */}
                   <span
-                    className="grid size-11 shrink-0 place-items-center rounded-lg bg-brand-50 text-brand-600 ring-1 ring-inset ring-brand-100 transition group-hover:bg-brand-100"
+                    className={
+                      "absolute inset-y-0 left-0 w-0.5 origin-top scale-y-0 transition-transform duration-300 group-hover:scale-y-100 " +
+                      (done
+                        ? "bg-gradient-to-b from-saffron-500 to-saffron-700"
+                        : "bg-gradient-to-b from-brand-400 to-brand-600")
+                    }
+                    aria-hidden
+                  />
+                  <span
+                    className={
+                      "grid size-11 shrink-0 place-items-center rounded-lg ring-1 ring-inset transition duration-200 group-hover:-rotate-6 group-hover:scale-105 " +
+                      (done
+                        ? "bg-saffron-100 text-saffron-700 ring-saffron-300/50"
+                        : "bg-brand-50 text-brand-600 ring-brand-100 group-hover:bg-brand-100")
+                    }
                     aria-hidden
                   >
                     <Icon size={22} weight="duotone" />
@@ -139,7 +163,7 @@ export default async function StudentOverviewPage() {
                       />
                       <span
                         className={
-                          "inline-flex shrink-0 items-center gap-1 text-xs font-semibold " +
+                          "inline-flex shrink-0 items-center gap-1 text-xs font-semibold tabular-nums " +
                           (done ? "text-saffron-700" : "text-ink-500")
                         }
                       >
@@ -187,10 +211,11 @@ export default async function StudentOverviewPage() {
           {/* Voices of MKSM — admin-swapped monthly embed (PRD §5.1) */}
           <Card>
             <CardHeader>
-              <CardTitle>Voices of MKSM</CardTitle>
-              <span className="text-sm text-muted-foreground">
-                {data.voices.month}
-              </span>
+              <CardTitle className="flex items-center gap-2">
+                <Waveform size={18} weight="duotone" className="text-brand-600" />
+                Voices of MKSM
+              </CardTitle>
+              <CardMeta>{data.voices.month}</CardMeta>
             </CardHeader>
             <CardContent>
               <div className="aspect-video w-full overflow-hidden rounded-md border border-border bg-ink-900">
@@ -212,47 +237,73 @@ export default async function StudentOverviewPage() {
           {/* School-wide Sankalp target vs achieved */}
           <Card>
             <CardHeader>
-              <CardTitle>Sankalp — school goal</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Target size={18} weight="duotone" className="text-saffron-700" />
+                Sankalp — school goal
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="font-display text-3xl text-ink-900">
+              <p className="font-display text-3xl tabular-nums text-ink-900">
                 {formatNumber(data.sankalp.schoolAchievedHours)}
                 <span className="text-lg text-muted-foreground">
                   {" "}
                   / {formatNumber(data.sankalp.schoolTargetHours)} hrs
                 </span>
               </p>
-              <Progress
-                value={schoolPct}
-                tone="saffron"
-                className="mt-3"
-                label="School Sankalp progress"
-              />
+              <div className="relative mt-3">
+                <Progress
+                  value={schoolPct}
+                  tone="saffron"
+                  label="School Sankalp progress"
+                />
+                {/* quarter marks, sitting on the bar like frets on a dandi */}
+                <span
+                  className="pointer-events-none absolute inset-0 flex items-center justify-between px-[25%]"
+                  aria-hidden
+                >
+                  {[0, 1, 2].map((i) => (
+                    <span key={i} className="h-2 w-px bg-surface/70" />
+                  ))}
+                </span>
+              </div>
               <p className="mt-2 text-sm text-muted-foreground">
                 {toPercent(schoolPct)}% of the school-wide pledge achieved.
               </p>
               <div className="mt-4 grid grid-cols-2 gap-2">
-                <div className="rounded-md bg-saffron-100 p-3">
-                  <p className="text-xs text-ink-500">This week</p>
-                  <p className="font-semibold text-saffron-700">
+                <div className="group/tile rounded-md bg-saffron-100 p-3 ring-1 ring-inset ring-saffron-300/40 transition duration-200 hover:-translate-y-0.5 hover:bg-saffron-300/45 hover:ring-saffron-300/80">
+                  <p className="flex items-center gap-1.5 text-xs text-ink-500">
+                    <Timer size={13} weight="duotone" className="text-saffron-700" />
+                    This week
+                  </p>
+                  <p className="font-semibold tabular-nums text-saffron-700">
                     {formatHours(data.sankalp.weeklyHours)} hrs
                   </p>
                 </div>
-                <div className="rounded-md bg-saffron-100 p-3">
-                  <p className="text-xs text-ink-500">Your total</p>
-                  <p className="font-semibold text-saffron-700">
+                <div className="group/tile rounded-md bg-saffron-100 p-3 ring-1 ring-inset ring-saffron-300/40 transition duration-200 hover:-translate-y-0.5 hover:bg-saffron-300/45 hover:ring-saffron-300/80">
+                  <p className="flex items-center gap-1.5 text-xs text-ink-500">
+                    <MusicNotes size={13} weight="duotone" className="text-saffron-700" />
+                    Your total
+                  </p>
+                  <p className="font-semibold tabular-nums text-saffron-700">
                     {formatHours(data.sankalp.personalHours)} hrs
                   </p>
                 </div>
               </div>
               {hoursToMilestone > 0 ? (
-                <p className="mt-3 rounded-md bg-brand-50 p-3 text-sm text-brand-800">
-                  {formatHours(hoursToMilestone)} hours away from reaching your{" "}
-                  {formatHours(data.sankalp.nextMilestoneHours)} hour goal.
+                <p className="mt-3 flex items-start gap-2 rounded-md bg-brand-50 p-3 text-sm text-brand-800 ring-1 ring-inset ring-brand-100">
+                  <MusicNoteSimple
+                    size={15}
+                    weight="fill"
+                    className="mt-0.5 shrink-0 text-brand-500"
+                  />
+                  <span>
+                    {formatHours(hoursToMilestone)} hours away from reaching your{" "}
+                    {formatHours(data.sankalp.nextMilestoneHours)} hour goal.
+                  </span>
                 </p>
               ) : null}
-              <Button variant="ghost" size="sm" className="mt-3 w-full">
-                Log hours
+              <Button variant="outline" size="sm" className="mt-3 w-full">
+                <Timer size={15} weight="duotone" /> Log hours
               </Button>
             </CardContent>
           </Card>
@@ -260,18 +311,29 @@ export default async function StudentOverviewPage() {
           {/* Announcements */}
           <Card>
             <CardHeader>
-              <CardTitle>Announcements</CardTitle>
-              <span className="text-sm text-muted-foreground">
+              <CardTitle className="flex items-center gap-2">
+                <Megaphone size={18} weight="duotone" className="text-brand-600" />
+                Announcements
+              </CardTitle>
+              <CardMeta>
                 {data.announcements.filter((a) => !a.read).length} unread
-              </span>
+              </CardMeta>
             </CardHeader>
             <CardContent className="space-y-3">
               {data.announcements.map((a) => (
-                <div key={a.id} className="flex gap-3">
+                <div
+                  key={a.id}
+                  className={
+                    "-mx-2 flex gap-3 rounded-md border-l-2 px-2 py-1.5 transition duration-200 hover:bg-brand-50/70 " +
+                    (a.read ? "border-transparent" : "border-brand-300")
+                  }
+                >
                   <span
                     className={
                       "mt-1.5 size-2 shrink-0 rounded-full " +
-                      (a.read ? "bg-ink-200" : "bg-brand-500")
+                      (a.read
+                        ? "bg-ink-200"
+                        : "bg-brand-500 ring-4 ring-brand-500/15")
                     }
                     aria-hidden
                   />
@@ -300,26 +362,129 @@ export default async function StudentOverviewPage() {
   );
 }
 
+/**
+ * The blended line-art each tile carries behind its numbers — a practice dial
+ * for hours, an open book of sargam for courses, a renewing month for the
+ * subscription. Same placement, weight and colour on all three so only the
+ * subject changes.
+ */
+function TileArt({ art }: { art: "hours" | "courses" | "renewal" }) {
+  return (
+    <svg
+      className="pointer-events-none absolute inset-y-0 right-0 h-full w-3/5 text-brand-500/[0.13] transition duration-300 group-hover:text-brand-600/[0.2]"
+      viewBox="0 0 180 110"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.4}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      preserveAspectRatio="xMidYMid slice"
+      aria-hidden
+    >
+      {art === "hours" ? (
+        /* A practice dial: rings, hour ticks and a hand at the quarter. */
+        <g transform="translate(126 56)">
+          <circle r="46" />
+          <circle r="34" strokeWidth={1} opacity="0.7" />
+          <path d="M-4 -52 h8" strokeWidth={2.6} />
+          {Array.from({ length: 12 }, (_, i) => {
+            const a = (i * Math.PI) / 6;
+            const [sx, sy] = [Math.sin(a) * 46, -Math.cos(a) * 46];
+            const [ex, ey] = [Math.sin(a) * 39, -Math.cos(a) * 39];
+            return (
+              <path
+                key={i}
+                d={`M${sx.toFixed(1)} ${sy.toFixed(1)} L${ex.toFixed(1)} ${ey.toFixed(1)}`}
+                strokeWidth={i % 3 === 0 ? 2 : 1}
+              />
+            );
+          })}
+          <path d="M0 0 L0 -30" strokeWidth={2} />
+          <path d="M0 0 L22 12" strokeWidth={1.6} />
+          <circle r="3" />
+        </g>
+      ) : null}
+
+      {art === "courses" ? (
+        /* An open book with sargam running across both leaves. */
+        <g transform="translate(96 22)">
+          <path d="M4 62 C 24 46, 50 44, 68 54 C 86 44, 112 46, 132 62" />
+          <path d="M4 62 L4 20 C 24 4, 50 2, 68 12 C 86 2, 112 4, 132 20 L132 62" />
+          <path d="M68 12 L68 54" strokeWidth={1.6} />
+          <g strokeWidth={0.9} opacity="0.75">
+            <path d="M16 24 C 32 14, 52 13, 60 20" />
+            <path d="M16 32 C 32 22, 52 21, 60 28" />
+            <path d="M16 40 C 32 30, 52 29, 60 36" />
+            <path d="M76 20 C 86 13, 104 14, 120 24" />
+            <path d="M76 28 C 86 21, 104 22, 120 32" />
+            <path d="M76 36 C 86 29, 104 30, 120 40" />
+          </g>
+          <g strokeWidth={1.2}>
+            <ellipse cx="34" cy="35" rx="4" ry="3" transform="rotate(-20 34 35)" />
+            <path d="M38 34 L38 20" />
+            <ellipse cx="98" cy="37" rx="4" ry="3" transform="rotate(-20 98 37)" />
+            <path d="M102 36 L102 22" />
+            <path d="M102 22 C 109 24 111 30 107 34" />
+          </g>
+        </g>
+      ) : null}
+
+      {art === "renewal" ? (
+        /* A month sheet with the renewal loop closing around it. */
+        <g transform="translate(104 20)">
+          <rect x="10" y="10" width="86" height="72" rx="7" />
+          <path d="M10 30 H96" />
+          <path d="M28 10 V2" strokeWidth={2} />
+          <path d="M78 10 V2" strokeWidth={2} />
+          <g strokeWidth={1} opacity="0.7">
+            <path d="M26 42 h9 M46 42 h9 M66 42 h9" />
+            <path d="M26 56 h9 M66 56 h9" />
+            <path d="M26 70 h9 M46 70 h9" />
+          </g>
+          <path d="M43 56 l7 7 l13 -15" strokeWidth={1.8} />
+          <path
+            d="M4 46 C 4 18, 30 -2, 58 4"
+            strokeWidth={1.2}
+            opacity="0.8"
+            strokeDasharray="5 6"
+          />
+          <path d="M52 -2 L60 4 L53 10" strokeWidth={1.2} opacity="0.8" />
+        </g>
+      ) : null}
+    </svg>
+  );
+}
+
 function StatTile({
   label,
   value,
   suffix,
   tone = "brand",
   icon: Icon,
+  art,
 }: {
   label: string;
   value: string;
   suffix?: string;
   tone?: "brand" | "saffron";
   icon?: Icon;
+  art?: "hours" | "courses" | "renewal";
 }) {
   const saffron = tone === "saffron";
   return (
-    <Card className="transition hover:shadow-pop">
-      <CardContent className="flex items-start justify-between gap-3 pt-5">
+    <Card className="group relative overflow-hidden transition duration-200 hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-pop">
+      {art ? <TileArt art={art} /> : null}
+      {/* the wash only arrives on hover, so the resting state stays quiet.
+          It is the same wash on every tile — hover is a shared behaviour, the
+          tone only colours the resting accent. */}
+      <div
+        className="pointer-events-none absolute inset-0 bg-gradient-to-br from-transparent to-brand-50/80 opacity-0 transition duration-300 group-hover:opacity-100"
+        aria-hidden
+      />
+      <CardContent className="relative flex items-start justify-between gap-3 pt-5">
         <div className="min-w-0">
           <p className="text-sm text-muted-foreground">{label}</p>
-          <p className="mt-1 font-display text-3xl text-ink-900">
+          <p className="mt-1 font-display text-3xl tabular-nums text-ink-900">
             {value}
             {suffix ? (
               <span
@@ -336,7 +501,9 @@ function StatTile({
         {Icon ? (
           <span
             className={
-              "grid size-10 shrink-0 place-items-center rounded-lg ring-1 ring-inset " +
+              // The lift is identical on every tile; brightness deepens each
+              // badge within its own tone instead of branching on colour.
+              "grid size-10 shrink-0 place-items-center rounded-lg ring-1 ring-inset transition duration-200 group-hover:-rotate-6 group-hover:scale-110 group-hover:brightness-95 " +
               (saffron
                 ? "bg-saffron-100 text-saffron-700 ring-saffron-300/40"
                 : "bg-brand-50 text-brand-600 ring-brand-100")
@@ -347,6 +514,12 @@ function StatTile({
           </span>
         ) : null}
       </CardContent>
+      {/* the sur line under the tile, drawn left to right on hover — same
+          line on all three tiles */}
+      <span
+        className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-gradient-to-r from-brand-400 to-brand-600 transition-transform duration-300 group-hover:scale-x-100"
+        aria-hidden
+      />
     </Card>
   );
 }

@@ -13,9 +13,9 @@ export default async function StudentHelpPage() {
   const tutorialsTab = (
     <div className="grid gap-4 sm:grid-cols-2">
       {tutorials.map((t) => (
-        <Card key={t.id}>
+        <Card key={t.id} interactive>
           <CardContent className="flex gap-3 pt-5">
-            <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-md bg-brand-100 text-brand-700">
+            <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-md bg-brand-100 text-brand-700 transition duration-200 group-hover:-rotate-6 group-hover:scale-105">
               <PlayCircle size={24} weight="duotone" />
             </span>
             <div>
@@ -34,7 +34,7 @@ export default async function StudentHelpPage() {
       {faqs.map((f) => (
         <details
           key={f.id}
-          className="group rounded-md border border-border bg-surface px-4 py-3"
+          className="group rounded-md border border-border bg-surface px-4 py-3 transition duration-200 hover:border-brand-200 open:border-brand-200"
         >
           <summary className="flex cursor-pointer list-none items-center justify-between gap-2 font-medium text-ink-900">
             {f.question}

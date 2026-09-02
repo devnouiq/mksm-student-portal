@@ -9,6 +9,7 @@ import { cn } from "@/lib/cn";
 import { Avatar } from "@/components/ui/avatar";
 import { Brand } from "../brand";
 import { LayoutSwitcher } from "../layout-switcher";
+import { RagaBackdrop } from "../raga-backdrop";
 import type { ShellProps } from "./types";
 
 /** The seven swaras — the signature ribbon of the Raga layout. Decorative. */
@@ -56,6 +57,8 @@ export function RagaShell({ role, user, children }: ShellProps) {
 
   return (
     <div className="mksm-raga flex min-h-screen flex-col">
+      {/* Ambient hall — dusk wash, sur-patti and the raga moving in the gutters */}
+      <RagaBackdrop />
       <header className="mksm-topbar sticky top-0 z-30 border-b border-border bg-surface/90 backdrop-blur">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-4 px-4 lg:px-8">
           <button

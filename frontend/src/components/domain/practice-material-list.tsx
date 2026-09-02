@@ -3,6 +3,7 @@ import type { PracticeMaterial } from "@/data/types";
 import { formatDateShort } from "@/lib/format";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { SurLine } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { MaterialIcon, materialMeta } from "./material-icon";
 
@@ -37,10 +38,11 @@ export function PracticeMaterialList({
         return (
           <li
             key={item.id}
-            className="flex flex-col gap-3 rounded-md border border-border p-4 sm:flex-row sm:items-center sm:justify-between"
+            className="group relative flex flex-col gap-3 overflow-hidden rounded-lg border border-border bg-surface p-4 shadow-card transition duration-200 hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-pop sm:flex-row sm:items-center sm:justify-between"
           >
+            <SurLine />
             <div className="flex min-w-0 items-start gap-3">
-              <span className="mt-0.5 inline-flex size-10 shrink-0 items-center justify-center rounded-md bg-ink-50">
+              <span className="mt-0.5 inline-flex size-10 shrink-0 items-center justify-center rounded-md bg-ink-50 ring-1 ring-inset ring-border transition duration-200 group-hover:-rotate-6 group-hover:scale-105">
                 <MaterialIcon kind={item.kind} />
               </span>
               <div className="min-w-0">

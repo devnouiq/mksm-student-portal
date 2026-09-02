@@ -30,7 +30,11 @@ export function Tabs({
       <div
         role="tablist"
         aria-label={ariaLabel}
-        className="flex flex-wrap gap-1 rounded-lg border border-border bg-surface-muted p-1"
+        /* An underline rail rather than a filled pill track: on the Classic
+           ivory the muted surface and the page ground are barely two percent
+           apart, so a fill cannot carry the control. A rule and a gold sur
+           line under the active tab read on every theme. */
+        className="flex flex-wrap items-end gap-6 border-b border-border"
       >
         {tabs.map((tab) => {
           const selected = tab.id === active;
@@ -44,13 +48,21 @@ export function Tabs({
               id={`tab-${tab.id}`}
               onClick={() => setActive(tab.id)}
               className={cn(
-                "rounded-md px-3 py-1.5 text-sm font-medium transition",
+                "relative -mb-px px-1 pb-2.5 pt-1.5 text-sm transition duration-200",
+                "focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 selected
-                  ? "bg-surface text-ink-900 shadow-card"
-                  : "text-ink-600 hover:text-ink-900",
+                  ? "font-semibold text-ink-900"
+                  : "font-medium text-ink-500 hover:text-ink-800",
               )}
             >
               {tab.label}
+              <span
+                className={cn(
+                  "absolute inset-x-0 bottom-0 h-0.5 origin-left rounded-full bg-gradient-to-r from-brand-400 to-brand-600 transition-transform duration-200",
+                  selected ? "scale-x-100" : "scale-x-0",
+                )}
+                aria-hidden
+              />
             </button>
           );
         })}

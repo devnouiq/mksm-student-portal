@@ -11,7 +11,8 @@ import { Badge } from "@/components/ui/badge";
 import { Brand } from "../brand";
 import { LayoutSwitcher } from "../layout-switcher";
 import { SargamWatermark } from "../sargam-watermark";
-import { TanpuraArt } from "../tanpura-art";
+import { StaffBackdrop } from "../staff-backdrop";
+import { TanpuraPlayerArt } from "../tanpura-player-art";
 import type { ShellProps } from "./types";
 
 /**
@@ -58,10 +59,10 @@ export function ClassicShell({ role, user, children }: ShellProps) {
 
   const sidebarInner = (
     <div className="relative flex h-full flex-col overflow-hidden">
-      {/* Ambient tanpura — the drone standing in the background of the rail */}
-      <TanpuraArt
+      {/* Ambient tanpura player — a musician blended into the rail background */}
+      <TanpuraPlayerArt
         aria-hidden
-        className="pointer-events-none absolute bottom-20 left-1/2 h-[18rem] w-auto -translate-x-1/2 text-brand-600/[0.30]"
+        className="pointer-events-none absolute bottom-16 left-1/2 h-[26rem] w-auto -translate-x-1/2 text-brand-600/[0.3]"
       />
       <div className="relative z-10 flex h-full flex-col">
         <div className="flex h-16 items-center border-b border-border px-5">
@@ -142,6 +143,8 @@ export function ClassicShell({ role, user, children }: ShellProps) {
         </header>
 
         <main className="relative flex-1 overflow-hidden px-4 py-6 lg:px-8 lg:py-8">
+          {/* Sheet music across the header band, where the page is open */}
+          <StaffBackdrop className="inset-x-0 top-[2.75rem] h-52 text-brand-700/[0.5]" />
           {/* Ambient sargam — the ascending scale, faint behind the content */}
           <SargamWatermark className="-top-4 right-0 pr-3 text-right text-[6rem] text-brand-500/[0.16] lg:text-[7.5rem]" />
           <div className="relative">{children}</div>

@@ -3,7 +3,6 @@ import type { Icon } from "@phosphor-icons/react";
 import Link from "next/link";
 import {
   ArrowRight,
-  CalendarBlank,
   CalendarCheck,
   CheckCircle,
   GraduationCap,
@@ -18,7 +17,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import { getRepositories } from "@/data";
 import { displayProgress } from "@/domain/course";
-import { formatDate, formatHours, formatNumber, toPercent } from "@/lib/format";
+import { formatHours, formatNumber, toPercent } from "@/lib/format";
 import { PageHeader } from "@/components/layout/page-header";
 import {
   Card,
@@ -32,6 +31,7 @@ import { Button, ButtonLink } from "@/components/ui/button";
 import { SubscriptionBadge } from "@/components/domain/subscription-badge";
 import { courseIcon } from "@/components/domain/course-icon";
 import { AlertMarquee } from "@/components/domain/alert-marquee";
+import { AnnouncementsPanel } from "@/components/domain/announcements-panel";
 import { MessageFromMk } from "@/components/domain/message-from-mk";
 
 export const metadata: Metadata = { title: "Overview" };
@@ -315,37 +315,9 @@ export default async function StudentOverviewPage() {
                 <Megaphone size={18} weight="duotone" className="text-brand-600" />
                 Announcements
               </CardTitle>
-              <CardMeta>
-                {data.announcements.filter((a) => !a.read).length} unread
-              </CardMeta>
             </CardHeader>
             <CardContent className="space-y-3">
-              {data.announcements.map((a) => (
-                <div
-                  key={a.id}
-                  className={
-                    "-mx-2 flex gap-3 rounded-md border-l-2 px-2 py-1.5 transition duration-200 hover:bg-brand-50/70 " +
-                    (a.read ? "border-transparent" : "border-brand-300")
-                  }
-                >
-                  <span
-                    className={
-                      "mt-1.5 size-2 shrink-0 rounded-full " +
-                      (a.read
-                        ? "bg-ink-200"
-                        : "bg-brand-500 ring-4 ring-brand-500/15")
-                    }
-                    aria-hidden
-                  />
-                  <div>
-                    <p className="text-sm font-medium text-ink-900">{a.title}</p>
-                    <p className="text-sm text-muted-foreground">{a.body}</p>
-                    <p className="mt-0.5 flex items-center gap-1 text-xs text-ink-400">
-                      <CalendarBlank size={12} /> {formatDate(a.postedAt)}
-                    </p>
-                  </div>
-                </div>
-              ))}
+              <AnnouncementsPanel announcements={data.announcements} />
               <ButtonLink
                 href="/student/announcements"
                 variant="outline"

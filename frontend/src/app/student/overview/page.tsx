@@ -503,10 +503,7 @@ function StatTile({
             className={
               // The lift is identical on every tile; brightness deepens each
               // badge within its own tone instead of branching on colour.
-              "grid size-10 shrink-0 place-items-center rounded-lg ring-1 ring-inset transition duration-200 group-hover:-rotate-6 group-hover:scale-110 group-hover:brightness-95 " +
-              (saffron
-                ? "bg-saffron-100 text-saffron-700 ring-saffron-300/40"
-                : "bg-brand-50 text-brand-600 ring-brand-100")
+              "grid size-10 shrink-0 place-items-center rounded-lg bg-brand-50 text-brand-600 ring-1 ring-inset ring-brand-100 transition duration-200 group-hover:-rotate-6 group-hover:scale-110 group-hover:brightness-95"
             }
             aria-hidden
           >

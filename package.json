@@ -1,0 +1,25 @@
+{
+  "name": "mksm-student-portal-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MKSM Student Portal — npm-workspaces monorepo (frontend, backend, shared contracts).",
+  "workspaces": [
+    "packages/*",
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev:frontend": "npm --workspace frontend run dev",
+    "dev:backend": "npm --workspace backend run dev",
+    "build:frontend": "npm --workspace frontend run build",
+    "build:backend": "npm --workspace backend run build",
+    "test:frontend": "npm --workspace frontend run test",
+    "test:backend": "npm --workspace backend run test",
+    "lint": "npm --workspace frontend run lint && npm --workspace backend run lint",
+    "backend:migrate": "npm --workspace backend run migrate",
+    "backend:seed": "npm --workspace backend run seed"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

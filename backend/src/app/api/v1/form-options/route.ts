@@ -1,0 +1,11 @@
+import { ok } from "@/lib/http/response";
+import { route } from "@/lib/http/with-auth";
+import { catalogService } from "@/modules/catalog/catalog";
+
+export const dynamic = "force-dynamic";
+
+export const GET = route({ roles: ["admin"] }, async ({ ctx }) => {
+  return ok(await catalogService.formOptions(), ctx);
+});
+
+export const OPTIONS = GET;

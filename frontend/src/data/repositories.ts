@@ -18,6 +18,8 @@ import type {
   AttendanceView,
   CatalogCourse,
   ClassLogEntry,
+  DeEnrollment,
+  DeEnrollmentLookup,
   HelpView,
   Holiday,
   LeaderboardView,
@@ -63,6 +65,8 @@ export interface TeacherRepository {
   getAttendance(mksmNo: string): Promise<AttendanceView>;
   getClassLog(mksmNo: string): Promise<TeacherClassLogView>;
   getAnnouncements(mksmNo: string): Promise<Announcement[]>;
+  /** De-enrolled students in the teacher's own batches (view-only, PRD §5.2). */
+  getDeEnrollments(mksmNo: string): Promise<DeEnrollment[]>;
 }
 
 export interface AdminRepository {
@@ -74,6 +78,10 @@ export interface AdminRepository {
   getSubscriptions(): Promise<SubscriptionRow[]>;
   getAnnouncements(): Promise<Announcement[]>;
   getFormOptions(): Promise<AdminFormOptions>;
+  /** All de-enrolled student records, admin-managed (PRD §5.3). */
+  getDeEnrollments(): Promise<DeEnrollment[]>;
+  /** MKSM-number and batch autofill source for the de-enrollment form. */
+  getDeEnrollmentLookup(): Promise<DeEnrollmentLookup>;
 }
 
 /** Shared across student & teacher personas. */

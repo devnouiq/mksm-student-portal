@@ -24,6 +24,7 @@ import {
   ShieldCheck,
   Trophy,
   UploadSimple,
+  UserMinus,
   UserPlus,
   UsersThree,
   WhatsappLogo,
@@ -58,6 +59,7 @@ const teacher: NavItem[] = [
   { label: "Class Schedule", href: "/teacher/schedule", icon: CalendarBlank },
   { label: "Attendance", href: "/teacher/attendance", icon: UsersThree },
   { label: "Class Log", href: "/teacher/class-log", icon: Notebook },
+  { label: "De-enrollment", href: "/teacher/de-enrollment", icon: UserMinus },
   { label: "Sankalp Leaderboard", href: "/teacher/sankalp", icon: Trophy },
   { label: "Announcements", href: "/teacher/announcements", icon: Megaphone },
 ];
@@ -72,6 +74,7 @@ const admin: NavItem[] = [
   { label: "Add Teacher", href: "/admin/add-teacher", icon: IdentificationCard },
   { label: "Manage Batches", href: "/admin/manage-batches", icon: Books },
   { label: "Subscriptions", href: "/admin/subscriptions", icon: ChartLineUp },
+  { label: "De-enrollment", href: "/admin/de-enrollment", icon: UserMinus },
   { label: "WhatsApp", href: "/admin/whatsapp", icon: WhatsappLogo },
   { label: "Announcements", href: "/admin/announcements", icon: Megaphone },
 ];

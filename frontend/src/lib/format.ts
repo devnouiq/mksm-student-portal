@@ -27,6 +27,14 @@ export function formatDate(iso: string): string {
   }).format(new Date(iso));
 }
 
+/** Month + year, e.g. "August 2026" — used for month grouping and filters. */
+export function formatMonth(iso: string): string {
+  return new Intl.DateTimeFormat("en-IN", {
+    month: "long",
+    year: "numeric",
+  }).format(new Date(iso));
+}
+
 export function formatDateShort(iso: string): string {
   return new Intl.DateTimeFormat("en-IN", {
     day: "numeric",

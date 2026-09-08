@@ -490,3 +490,24 @@ export interface AdminFormOptions {
   teachers: string[];
   ragas: string[];
 }
+
+/* ------------------------------------------------------------------ *
+ * De-enrollment (admin-managed record, teacher view-only) (PRD §5.2/§5.3)
+ * ------------------------------------------------------------------ */
+
+export interface DeEnrollment {
+  id: string;
+  mksmNo: string;
+  studentName: string;
+  batchName: string;
+  teacherName: string;
+  deEnrolledOn: string; // ISO — drives the month filter
+}
+
+/** Autofill source for the admin de-enrollment form. */
+export interface DeEnrollmentLookup {
+  /** Known students, keyed for MKSM-number autofill of name + batch. */
+  students: { mksmNo: string; studentName: string; batchName: string }[];
+  /** Batch name → teacher name, so the teacher fills in from the batch. */
+  batchTeacher: Record<string, string>;
+}

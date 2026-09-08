@@ -7,6 +7,7 @@ import type {
   AdminBatch,
   Announcement,
   ClassLogEntry,
+  DeEnrollment,
   PracticeMaterial,
   ProviderBreakdown,
   StudentDirectoryRow,
@@ -159,6 +160,43 @@ export const studentDirectory: StudentDirectoryRow[] = [
     classes30d: 0,
     classes90d: 3,
     lastAttended: inDays(-34),
+  },
+];
+
+/** De-enrolled student records — admin-entered, teachers view their own only.
+    Spread across months so the month filter has something to sort. */
+export const deEnrollments: DeEnrollment[] = [
+  {
+    id: "de-1",
+    mksmNo: "100612",
+    studentName: "Kavya Iyer",
+    batchName: "Surel Batch",
+    teacherName: "Kedar Joshi",
+    deEnrolledOn: inDays(-9, 10),
+  },
+  {
+    id: "de-2",
+    mksmNo: "100511",
+    studentName: "Rohan Shinde",
+    batchName: "Dhun Batch",
+    teacherName: "Guru Deshpande",
+    deEnrolledOn: inDays(-21, 10),
+  },
+  {
+    id: "de-3",
+    mksmNo: "100522",
+    studentName: "Sneha Joshi",
+    batchName: "Swatva Batch",
+    teacherName: "Anjali Rao",
+    deEnrolledOn: inDays(-38, 10),
+  },
+  {
+    id: "de-4",
+    mksmNo: "100604",
+    studentName: "Arjun Menon",
+    batchName: "Taan Batch",
+    teacherName: "Guru Deshpande",
+    deEnrolledOn: inDays(-52, 10),
   },
 ];
 

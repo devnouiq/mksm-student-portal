@@ -48,6 +48,7 @@ import {
   adminBatches,
   adminClassLogs,
   adminMasterLibrary,
+  deEnrollments,
   providerBreakdowns,
   studentDirectory,
   subscriptionRows,
@@ -167,6 +168,11 @@ const teacherRepository: TeacherRepository = {
   getAnnouncements() {
     return settle(teacherAnnouncements);
   },
+  getDeEnrollments() {
+    // Teachers see de-enrolled students in their own batches only (PRD §5.2).
+    const ownBatches = new Set(teacherBatches.map((b) => b.name));
+    return settle(deEnrollments.filter((d) => ownBatches.has(d.batchName)));
+  },
 };
 
 const adminRepository: AdminRepository = {
@@ -209,6 +215,21 @@ const adminRepository: AdminRepository = {
       batches: adminBatches.map((b) => b.name),
       teachers: ["Guru Deshpande", "Anjali Rao", "Kedar Joshi"],
       ragas: ragaOptions,
+    });
+  },
+  getDeEnrollments() {
+    return settle(deEnrollments);
+  },
+  getDeEnrollmentLookup() {
+    return settle({
+      students: studentDirectory.map((s) => ({
+        mksmNo: s.mksmNo,
+        studentName: s.name,
+        batchName: s.batchName,
+      })),
+      batchTeacher: Object.fromEntries(
+        adminBatches.map((b) => [b.name, b.teacherName]),
+      ),
     });
   },
 };

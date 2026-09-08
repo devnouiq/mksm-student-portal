@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { UploadSimple } from "@phosphor-icons/react";
+import { UploadSimple, YoutubeLogo } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -37,6 +37,7 @@ const fromHint: Record<string, string> = {
 
 export function AnnouncementForm({ batches }: { batches: string[] }) {
   const [from, setFrom] = useState("admin");
+  const [attachment, setAttachment] = useState<"file" | "youtube">("file");
   const [audience, setAudience] = useState("all");
   const [important, setImportant] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -87,17 +88,72 @@ export function AnnouncementForm({ batches }: { batches: string[] }) {
         </Select>
       </Field>
 
-      <Field label="Attachment" htmlFor="an-file" hint="Optional — choose or drag a file.">
-        <label
-          htmlFor="an-file"
-          className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-dashed border-ink-300 bg-surface-muted px-4 py-6 text-center text-sm text-muted-foreground hover:border-brand-400"
-        >
-          <UploadSimple size={22} className="text-ink-400" />
-          <span>
-            <span className="font-medium text-brand-700">Choose a file</span> or drag it here
-          </span>
-          <input id="an-file" name="file" type="file" className="sr-only" />
-        </label>
+      <Field
+        label="Attachment"
+        htmlFor={attachment === "file" ? "an-file" : "an-youtube"}
+        hint={
+          attachment === "file"
+            ? "Optional — choose or drag a file."
+            : "Optional — paste a YouTube link instead of a file."
+        }
+      >
+        <div className="mb-2 inline-flex rounded-md border border-border bg-surface-muted p-0.5">
+          <button
+            type="button"
+            onClick={() => setAttachment("file")}
+            aria-pressed={attachment === "file"}
+            className={
+              "flex items-center gap-1.5 rounded-[5px] px-3 py-1.5 text-sm font-medium transition " +
+              (attachment === "file"
+                ? "bg-surface text-ink-900 shadow-card"
+                : "text-muted-foreground hover:text-ink-800")
+            }
+          >
+            <UploadSimple size={16} /> File
+          </button>
+          <button
+            type="button"
+            onClick={() => setAttachment("youtube")}
+            aria-pressed={attachment === "youtube"}
+            className={
+              "flex items-center gap-1.5 rounded-[5px] px-3 py-1.5 text-sm font-medium transition " +
+              (attachment === "youtube"
+                ? "bg-surface text-ink-900 shadow-card"
+                : "text-muted-foreground hover:text-ink-800")
+            }
+          >
+            <YoutubeLogo size={16} /> YouTube link
+          </button>
+        </div>
+
+        {attachment === "file" ? (
+          <label
+            htmlFor="an-file"
+            className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-dashed border-ink-300 bg-surface-muted px-4 py-6 text-center text-sm text-muted-foreground hover:border-brand-400"
+          >
+            <UploadSimple size={22} className="text-ink-400" />
+            <span>
+              <span className="font-medium text-brand-700">Choose a file</span> or drag it here
+            </span>
+            <input id="an-file" name="file" type="file" className="sr-only" />
+          </label>
+        ) : (
+          <div className="relative">
+            <YoutubeLogo
+              size={18}
+              weight="fill"
+              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#ff0000]/80"
+            />
+            <Input
+              id="an-youtube"
+              name="youtube"
+              type="url"
+              inputMode="url"
+              placeholder="https://www.youtube.com/watch?v=…"
+              className="pl-10"
+            />
+          </div>
+        )}
       </Field>
 
       <Field label="Share with" htmlFor="an-audience">

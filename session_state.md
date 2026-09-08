@@ -1,6 +1,106 @@
 # Session State — MKSM Student Portal
 
-_Last updated: 2026-09-01_
+_Last updated: 2026-09-08_
+
+## Backend + database build (2026-09-08)
+
+First backend workstream. The repo is now an **npm-workspaces monorepo**
+(`frontend/`, `backend/`, `packages/contracts/`). **The frontend was not touched
+and is not wired to the API** — that integration is a later, separate job.
+
+### What landed
+
+- **`packages/contracts`** — `@mksm/contracts`: enums, entity/view-model schemas
+  (1:1 with `frontend/src/data/types.ts`), request DTOs and the response
+  envelope, all as zod. The single source of truth for the API shape; the
+  frontend adopts it when it swaps `frontend/src/data/index.ts` later.
+- **`backend/`** — a dedicated Next.js 16 app, API only, route handlers under
+  `src/app/api/v1/**` (48 routes). Layered route → service → repository → DB.
+  - `src/lib`: zod-validated startup `config`, pino structured `logger` with a
+    per-request `correlationId`, lazy Drizzle client over the Supabase **session
+    pooler**, service-role + anon Supabase clients, `route()` / `publicRoute()`
+    wrappers (auth + RBAC + CORS + uniform `{data|error, correlationId}`
+    envelope), `AppError` taxonomy, `writeAudit`.
+  - `src/domain`: pure rules — `homework-cutoff` (mirrors
+    `frontend/src/domain/homework.ts`), `progress` (mirrors `course.ts`),
+    `mksm-no` (banded 6-digit allocation), `sankalp` roll-ups, `mappers`
+    (DB snake enums ↔ API literal unions + `formatClassTime`).
+  - `src/modules/*`: one folder per domain (auth, profiles, catalog, batches,
+    sessions, homework, practice, me, announcements, sankalp, subscriptions,
+    classlogs, engagement, overview, files).
+- **`backend/supabase/migrations/0001..0017`** — hand-written SQL, the schema
+  source of truth: 4 extensions, 44 enums, **33 tables**, FKs + indexes +
+  CHECK/UNIQUE constraints, `moddatetime` `updated_at` triggers, an
+  `on_auth_user_created` trigger that provisions `public.profiles` from
+  `raw_user_meta_data`, `allocate_mksm_no()`, `compute_homework_is_late()`,
+  RLS **enabled + forced on every public table** with per-role policies, and 7
+  read-model views (`v_enrollment_progress`, `v_sankalp_student_totals`,
+  `v_sankalp_batch_totals`, `v_subscription_payment_counts`,
+  `v_student_attendance_stats`, `v_teacher_homework_stats`,
+  `v_pending_class_logs`).
+- **`backend/scripts/migrate.ts`** — forward-only runner, tracks
+  `public._migrations`, one transaction per file, `--status` mode.
+- **`backend/scripts/seed.ts` + `supabase/seed.sql`** — demo data mirroring the
+  FE fixtures (Melody 100428 / Guru 500112 / Admin 900001 + 6 more). Creates the
+  Auth users via the admin API when `SUPABASE_SERVICE_ROLE_KEY` is set, else via
+  a dev-only direct `auth.users` insert.
+
+### Verified
+
+- `./init.sh` green end to end: `npm install` (workspaces) → frontend **44
+  tests** + build (36 routes) → backend **39 tests** + `next build` (48 routes).
+- Migrations **applied to the live Supabase project** over the session pooler:
+  34 base tables (33 + `_migrations`), 7 views, 44 enums, all helper functions
+  and the auth trigger present; **0 RLS-disabled public tables**.
+- `seed.ts` loaded: profiles 9, batches 4, enrollments 8, class_sessions 20,
+  subscriptions 5 (+15 payments), sankalp_logs 30, announcements 5, etc.; all 7
+  views return rows.
+- Server smoke test: `GET /api/health` → `{status:"ok", db:true}`; a protected
+  route with no token → `401` with the standard envelope + `correlationId`;
+  `POST /auth/login` with wrong creds → uniform `401` (no user enumeration).
+
+### Security gate (self-review of the diff)
+
+- AuthN on every non-public route (Supabase JWT verify + active-status check);
+  RBAC via `route({roles})`; service layer re-checks row ownership before
+  mutating; RLS forced as defense-in-depth.
+- All SQL parameterised (Drizzle builder or tagged `sql`); no `sql.raw` /
+  string concat with input in `src/` (grep-clean).
+- `SUPABASE_SERVICE_ROLE_KEY` server-only, in gitignored `.env.local`, in the
+  logger `redact` list, never in a response.
+- Login/forgot-password give no user enumeration; errors never leak stacks.
+- **Recorded gaps:** (1) no app-level rate limiting (do at the edge / add
+  middleware); (2) `GET /files/:id` allows any authenticated user (mitigated:
+  private buckets, UUID paths, 10-min signed URLs); (3) `seed.ts` SQL fallback
+  writes bcrypt hashes directly — dev only.
+
+### API docs
+
+- **Swagger UI** at `GET /api/docs`, **OpenAPI 3.0.3 spec** at `GET /api/openapi.json`
+  (51 paths, 100 component schemas), static copy `backend/openapi.json`
+  (`npm --workspace backend run openapi` to regenerate). Generated from
+  `backend/src/lib/openapi.ts` (hand-maintained endpoint catalog) + the
+  `@mksm/contracts` zod schemas.
+- Human map (endpoint → frontend repository method) + curl recipes in
+  `backend/README.md`.
+
+### Owner action still required (does not block code / migrations)
+
+- Put the real **`SUPABASE_ANON_KEY`** and **`SUPABASE_SERVICE_ROLE_KEY`**
+  (Dashboard → Project Settings → API) into `backend/.env.local`. Until then,
+  live login (`signInWithPassword`) and the admin-API seed path cannot run;
+  everything else (migrations, health, RBAC 401/403) works.
+- `backend/.env.local` currently holds the working `DATABASE_URL` (session
+  pooler, URL-encoded password) so migrations/seed run locally.
+
+### Next step
+
+Backend APIs + DB are ready. The later integration job: add an HTTP
+implementation of the `Repositories` interface in the frontend and switch it in
+`frontend/src/data/index.ts` (import `@mksm/contracts`, map endpoint → method
+per the table in `backend/README.md`). No screen changes needed.
+
+---
 
 ## MKSM music identity — Classic theme (2026-09-01)
 

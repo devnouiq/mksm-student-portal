@@ -278,6 +278,60 @@
         "production_readiness": "UI prototype — Edit/Remove are local-state only (consistent with the existing M1 mock waiver); wired to endpoints in M2. Build + types + lint clean.",
         "verification": "tsc clean, build green (36 routes), 44/44 tests, in-browser proof for all four items."
       }
+    },
+    {
+      "id": "backend-workspace",
+      "title": "Backend workspace — npm-workspaces monorepo + @mksm/contracts shared API contract",
+      "role": "shared",
+      "status": "done",
+      "evidence": "Root package.json declares npm workspaces [packages/*, frontend, backend]; frontend package.json untouched. packages/contracts (@mksm/contracts): enums.ts + entities.ts (1:1 with frontend/src/data/types.ts) + api.ts (request DTOs from the FE forms) + envelope.ts, all zod. init.sh rewritten to install at the workspace root then test+build both workspaces. Vercel deploy = one Project per app (Root Directory frontend / backend).",
+      "gates": {
+        "verification": "npm install (workspaces) resolves @mksm/contracts; ./init.sh green end to end (frontend 44 tests + build 36 routes; backend 39 tests + build 48 routes)."
+      }
+    },
+    {
+      "id": "backend-database-schema",
+      "title": "Database schema on Supabase — 33 tables, RLS, triggers, views (SQL migrations)",
+      "role": "shared",
+      "status": "done",
+      "evidence": "backend/supabase/migrations/0001..0017 (hand-written SQL = source of truth), applied to the live Supabase project over the session pooler via backend/scripts/migrate.ts (tracks public._migrations, one tx per file). 4 extensions, 44 pg enums, 33 base tables with FKs + indexes + CHECK/UNIQUE, moddatetime updated_at triggers, on_auth_user_created trigger provisioning public.profiles from raw_user_meta_data, allocate_mksm_no()/compute_homework_is_late(), RLS enabled+forced on every public table with per-role policies, 7 read-model views (v_enrollment_progress, v_sankalp_student_totals, v_sankalp_batch_totals, v_subscription_payment_counts, v_student_attendance_stats, v_teacher_homework_stats, v_pending_class_logs). backend/supabase/seed.sql + scripts/seed.ts load demo data mirroring frontend/src/data/mock/* (profiles 9, batches 4, subscriptions 5, sankalp_logs 30, ...).",
+      "gates": {
+        "solid": "Schema derived directly from frontend/src/data/types.ts + PRD §6/§8 — no invented entities. Enum tables vs pg enums chosen by whether admins edit the set.",
+        "secure_by_default": "RLS enabled + FORCE on all 34 public tables (0 without RLS, verified); subscriptions/payments have no client-write policy (service_role sync only); audit_log/notification_log have no client policy at all.",
+        "production_readiness": "Forward-only numbered migrations, tracked, one transaction each, re-runnable; rollback notes in each file header + Supabase PITR. Bounded/indexed queries; statement_timeout on the pooled connection.",
+        "verification": "migrate applied 17/17; psql checks — 34 tables, 7 views, 44 enums, all helper fns + auth trigger present, 0 RLS-disabled public tables; seed loaded; all 7 views return rows."
+      }
+    },
+    {
+      "id": "backend-api",
+      "title": "Backend API — Next.js route handlers for every frontend repository method (48 routes)",
+      "role": "shared",
+      "status": "done",
+      "evidence": "backend/ Next.js 16 app, API only, src/app/api/v1/** (48 routes). Layered route -> service -> repository -> Drizzle/SQL. src/lib: zod-validated config (fail-fast), pino structured logging with per-request correlationId, lazy Drizzle client over the Supabase session pooler, service-role+anon Supabase clients, route()/publicRoute() wrappers (bearer-JWT auth + RBAC + CORS + uniform {data|error,correlationId} envelope + AppError taxonomy), writeAudit append-only trail. src/domain: pure rules mirrored from the FE (homework-cutoff <- frontend/src/domain/homework.ts, progress <- course.ts, mksm-no banded allocation, sankalp roll-ups, enum/label mappers). src/modules/*: auth, profiles, catalog, batches, sessions, homework, practice, me, announcements, sankalp, subscriptions, classlogs, engagement, overview, files. Endpoint->method map in backend/README.md. Frontend NOT integrated (deliberate — later job).",
+      "gates": {
+        "tdd": "backend vitest — 39 tests: domain (homework-cutoff incl. boundary/past/empty, progress incl. ongoing->100%, mksm-no band+regex, sankalp roll-ups, enum round-trips + formatClassTime), contract DTOs (valid + rejection incl. 422 shape), route()/publicRoute() wrapper (401 no token, 403 wrong role, OPTIONS 204, correlationId propagation).",
+        "solid": "Deep modules: thin route handlers, business rules + authz in services, DB access in repositories, framework-free domain fns. Screens (later) will depend only on @mksm/contracts.",
+        "secure_by_default": "AuthN on every non-public route (Supabase JWT verify + active-status check); RBAC via route({roles}); services re-check row ownership (teacher owns batch, student owns enrollment) before mutating; RLS forced as defence-in-depth. All SQL parameterised (Drizzle builder or tagged sql) — grep-clean of sql.raw/concat in src/. SUPABASE_SERVICE_ROLE_KEY server-only, gitignored .env.local, in logger redact list, never in a response. Login/forgot-password give no user enumeration; fail() never leaks stacks. Recorded gaps: no app-level rate limiting (edge/middleware later); GET /files/:id allows any authenticated user (mitigated: private buckets + UUID paths + 10-min signed URLs); seed.ts SQL fallback writes bcrypt hashes directly (dev only).",
+        "production_readiness": "Startup config validation; structured logs + correlation ids threaded to responses + audit_log; typed AppError -> envelope, no raw errors out; timeouts + small pool on the pooler; GET /api/health (DB ping) returns 503 when the DB is down. Rate limiting deferred (recorded).",
+        "verification": "npx tsc --noEmit clean; next build green (48 routes); server smoke test — GET /api/health {status:ok,db:true}; protected route no-token -> 401 envelope+correlationId; POST /auth/login wrong creds -> uniform 401. Live DB tested: 17/17 migrations in ledger, all 7 views return correct data, RLS enforced by role (student cannot read another student's homework/subscriptions, student writes to subscriptions/class_logs blocked, student can insert only own sankalp_log, teacher sees class_logs for own batches only)."
+      }
+    },
+    {
+      "id": "backend-api-docs",
+      "title": "API docs — Swagger UI + OpenAPI spec",
+      "role": "shared",
+      "status": "done",
+      "evidence": "backend/src/lib/openapi.ts — hand-maintained endpoint catalog (63 operations / 51 paths) turned into an OpenAPI 3.0.3 spec, with components.schemas built from every zod schema in @mksm/contracts via zod-to-json-schema (100 schemas). Served live: GET /api/openapi.json (spec) and GET /api/docs (Swagger UI from CDN, 'Try it out' + bearer Authorize). backend/scripts/gen-openapi.ts + `npm --workspace backend run openapi` write backend/openapi.json for Postman/Insomnia import. backend/README.md gained a Docs section + the endpoint->repository-method map + curl recipes.",
+      "gates": {
+        "verification": "tsc clean; next build green (now 50 routes incl. /api/docs + /api/openapi.json); live: GET /api/docs -> 200 text/html, GET /api/openapi.json -> valid 3.0.3 spec (51 paths, 100 schemas, request bodies $ref the contract schemas)."
+      }
+    },
+    {
+      "id": "backend-owner-followups",
+      "title": "Owner: paste real Supabase anon + service_role keys into backend/.env.local",
+      "role": "shared",
+      "status": "blocked",
+      "evidence": "backend/.env.local has a working DATABASE_URL (session pooler) so migrations + seed run, but SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY are placeholders. Needed for live login (signInWithPassword) and the admin-API seed path. Dashboard -> Project Settings -> API. Does not block the schema, health, or RBAC 401/403 checks."
     }
   ]
 }

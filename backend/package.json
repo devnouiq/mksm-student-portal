@@ -1,0 +1,41 @@
+{
+  "name": "@mksm/backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MKSM Student Portal — backend API (Next.js route handlers, Supabase Postgres + Auth, Drizzle).",
+  "scripts": {
+    "dev": "next dev -p 3001",
+    "build": "next build",
+    "start": "next start -p 3001",
+    "lint": "next lint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "migrate": "tsx scripts/migrate.ts",
+    "migrate:status": "tsx scripts/migrate.ts --status",
+    "seed": "tsx scripts/seed.ts",
+    "db:generate": "drizzle-kit generate",
+    "openapi": "tsx scripts/gen-openapi.ts"
+  },
+  "dependencies": {
+    "@mksm/contracts": "*",
+    "@supabase/supabase-js": "^2.47.10",
+    "drizzle-orm": "^0.36.4",
+    "next": "16.3.2",
+    "pino": "^9.5.0",
+    "postgres": "^3.4.5",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "zod": "^3.24.1",
+    "zod-to-json-schema": "^3.25.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "drizzle-kit": "^0.28.1",
+    "eslint": "^9",
+    "eslint-config-next": "16.3.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5",
+    "vitest": "^2.1.9"
+  }
+}

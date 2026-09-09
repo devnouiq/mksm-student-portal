@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
 import { Select } from "@/components/ui/select";
 import { Table, TableWrap, TD, TH, THead, TR } from "@/components/ui/table";
+import { Textarea } from "@/components/ui/textarea";
 import { DownloadCsvButton } from "@/components/domain/download-csv-button";
 
 const csvColumns: CsvColumn<DeEnrollment>[] = [
@@ -21,6 +22,7 @@ const csvColumns: CsvColumn<DeEnrollment>[] = [
   { header: "Batch", value: (r) => r.batchName },
   { header: "Teacher", value: (r) => r.teacherName },
   { header: "De-enrolled on", value: (r) => formatDate(r.deEnrolledOn) },
+  { header: "Reason of discontinuation", value: (r) => r.reason },
 ];
 
 type Draft = Omit<DeEnrollment, "id">;
@@ -32,6 +34,7 @@ function emptyDraft(): Draft {
     batchName: "",
     teacherName: "",
     deEnrolledOn: new Date().toISOString(),
+    reason: "",
   };
 }
 
@@ -184,6 +187,7 @@ export function DeEnrollmentManager({
                   <TH>Batch</TH>
                   <TH>Teacher</TH>
                   <TH>De-enrolled on</TH>
+                  <TH>Reason</TH>
                   <TH className="text-right">Actions</TH>
                 </TR>
               </THead>
@@ -195,6 +199,7 @@ export function DeEnrollmentManager({
                     <TD className="whitespace-nowrap">{d.batchName}</TD>
                     <TD className="whitespace-nowrap">{d.teacherName}</TD>
                     <TD className="whitespace-nowrap">{formatDate(d.deEnrolledOn)}</TD>
+                    <TD className="max-w-xs text-muted-foreground">{d.reason}</TD>
                     <TD>
                       <div className="flex items-center justify-end gap-1">
                         <Button
@@ -372,6 +377,16 @@ function DeEnrollmentForm({
           />
         </Field>
       </div>
+
+      <Field label="Reason of discontinuation" htmlFor="de-reason">
+        <Textarea
+          id="de-reason"
+          value={draft.reason}
+          onChange={(e) => set("reason", e.target.value)}
+          rows={2}
+          placeholder="Why the student discontinued"
+        />
+      </Field>
 
       <div className="flex justify-end gap-2">
         {onCancel ? (

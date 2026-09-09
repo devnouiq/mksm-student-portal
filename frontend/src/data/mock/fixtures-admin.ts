@@ -173,6 +173,7 @@ export const deEnrollments: DeEnrollment[] = [
     batchName: "Surel Batch",
     teacherName: "Kedar Joshi",
     deEnrolledOn: inDays(-9, 10),
+    reason: "Relocated abroad, unable to attend the batch timing.",
   },
   {
     id: "de-2",
@@ -181,6 +182,7 @@ export const deEnrollments: DeEnrollment[] = [
     batchName: "Dhun Batch",
     teacherName: "Guru Deshpande",
     deEnrolledOn: inDays(-21, 10),
+    reason: "Financial constraints.",
   },
   {
     id: "de-3",
@@ -189,6 +191,7 @@ export const deEnrollments: DeEnrollment[] = [
     batchName: "Swatva Batch",
     teacherName: "Anjali Rao",
     deEnrolledOn: inDays(-38, 10),
+    reason: "Health reasons.",
   },
   {
     id: "de-4",
@@ -197,6 +200,7 @@ export const deEnrollments: DeEnrollment[] = [
     batchName: "Taan Batch",
     teacherName: "Guru Deshpande",
     deEnrolledOn: inDays(-52, 10),
+    reason: "Shifted to offline classes near home.",
   },
 ];
 

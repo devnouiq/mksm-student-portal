@@ -502,6 +502,7 @@ export interface DeEnrollment {
   batchName: string;
   teacherName: string;
   deEnrolledOn: string; // ISO — drives the month filter
+  reason: string; // reason of discontinuation
 }
 
 /** Autofill source for the admin de-enrollment form. */

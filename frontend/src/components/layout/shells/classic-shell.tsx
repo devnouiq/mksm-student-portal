@@ -177,7 +177,7 @@ export function ClassicShell({ role, user, children }: ShellProps) {
               type="button"
               onClick={() => setDrawerOpen(false)}
               aria-label="Close menu"
-              className="absolute right-3 top-4 z-10 grid size-8 place-items-center rounded-md text-ink-500 hover:bg-ink-100"
+              className="absolute right-3 top-4 z-20 grid size-8 place-items-center rounded-md text-ink-500 hover:bg-ink-100"
             >
               <X size={18} />
             </button>

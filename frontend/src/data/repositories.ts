@@ -28,6 +28,7 @@ import type {
   Role,
   ScheduleEntry,
   StudentCoursesView,
+  ManagedStudent,
   StudentDirectoryRow,
   StudentHomeworkView,
   StudentOverview,
@@ -73,6 +74,8 @@ export interface AdminRepository {
   getOverview(mksmNo: string): Promise<AdminOverview>;
   getBatches(): Promise<AdminBatch[]>;
   getStudents(): Promise<StudentDirectoryRow[]>;
+  /** Full managed-student records for add / edit student (PRD §5.3). */
+  getManagedStudents(): Promise<ManagedStudent[]>;
   getPracticeLibrary(): Promise<PracticeMaterialView>;
   getClassLogs(): Promise<ClassLogEntry[]>;
   getSubscriptions(): Promise<SubscriptionRow[]>;

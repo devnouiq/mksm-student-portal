@@ -451,6 +451,18 @@ export interface AdminBatch {
   day: string;
   time: string;
   zoomLink: string;
+  /** Primary time zone the batch time is expressed in (e.g. "IST"). */
+  timeZone?: string;
+  /** Countries whose students may be assigned to this batch. */
+  allowedCountries?: string[];
+  /** Zoom join details kept alongside the static link. */
+  zoomMeetingId?: string;
+  zoomPasscode?: string;
+  /** Static WhatsApp group invite link for the batch. */
+  whatsappLink?: string;
+  pitch?: string;
+  studentType?: string;
+  genderMix?: string;
 }
 
 export interface StudentDirectoryRow {
@@ -463,6 +475,52 @@ export interface StudentDirectoryRow {
   classes30d: number;
   classes90d: number;
   lastAttended: string | null; // ISO
+}
+
+/* ------------------------------------------------------------------ *
+ * Managed student — full admin record behind add / edit student, with
+ * a status lifecycle, an audit trail and attendance (PRD §5.3).
+ * MKSM number is the primary id every admin action is keyed to.
+ * ------------------------------------------------------------------ */
+
+export type StudentStatus = "active" | "temporary-break" | "inactive" | "de-enrolled";
+
+export interface StudentAuditEvent {
+  id: string;
+  date: string; // ISO — when the action was taken
+  label: string; // e.g. "Joined MKSM", "Assigned to Dhun Batch", "Put on temporary break"
+  note?: string;
+}
+
+export interface StudentAttendanceRow {
+  id: string;
+  date: string; // ISO
+  batchName: string;
+  ragaCovered: string;
+  present: boolean;
+}
+
+export interface ManagedStudent {
+  mksmNo: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+  dob?: string; // ISO
+  gender: string;
+  experienceYears?: number;
+  address?: string;
+  city?: string;
+  country: string;
+  pincode?: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  batchName: string;
+  status: StudentStatus;
+  joiningDate: string; // ISO — start date with MKSM
+  info?: string;
+  audit: StudentAuditEvent[];
+  attendance: StudentAttendanceRow[];
 }
 
 export interface SubscriptionRow {

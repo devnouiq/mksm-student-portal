@@ -5,11 +5,30 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { Table, TableWrap, TH, THead, TR, TD } from "@/components/ui/table";
+import { BatchAttendance, type BatchAttendanceRow } from "./batch-attendance";
 
 export const metadata: Metadata = { title: "Classes / Batches" };
 
 export default async function AdminBatchesPage() {
-  const batches = await getRepositories().admin.getBatches();
+  const repos = getRepositories();
+  const [batches, managed] = await Promise.all([
+    repos.admin.getBatches(),
+    repos.admin.getManagedStudents(),
+  ]);
+
+  // Same attendance data as the student view, grouped by batch.
+  const rowsByBatch: Record<string, BatchAttendanceRow[]> = {};
+  for (const s of managed) {
+    for (const a of s.attendance) {
+      (rowsByBatch[a.batchName] ??= []).push({
+        id: a.id,
+        date: a.date,
+        studentName: `${s.firstName} ${s.lastName}`,
+        raga: a.ragaCovered,
+        present: a.present,
+      });
+    }
+  }
 
   return (
     <>
@@ -66,6 +85,10 @@ export default async function AdminBatchesPage() {
           </tbody>
         </Table>
       </TableWrap>
+
+      <div className="mt-8">
+        <BatchAttendance batches={batches.map((b) => b.name)} rowsByBatch={rowsByBatch} />
+      </div>
     </>
   );
 }

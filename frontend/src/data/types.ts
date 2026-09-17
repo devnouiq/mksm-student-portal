@@ -519,6 +519,13 @@ export interface ManagedStudent {
   status: StudentStatus;
   joiningDate: string; // ISO — start date with MKSM
   info?: string;
+  /** Temporary break tracking (max 3 months). Set while status is on break. */
+  breakStartDate?: string; // ISO
+  resumeBy?: string; // ISO — breakStartDate + 3 months
+  subscriptionPaused?: boolean;
+  /** A one-time enrollment fee is due on re-enrollment after a lapsed break. */
+  feeApplicable?: boolean;
+  enrollmentFee?: number; // rupees
   audit: StudentAuditEvent[];
   attendance: StudentAttendanceRow[];
 }

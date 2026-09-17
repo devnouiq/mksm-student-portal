@@ -31,10 +31,28 @@ const STATUS_META: Record<
   { label: string; tone: "success" | "warning" | "neutral" | "danger" }
 > = {
   active: { label: "Active", tone: "success" },
-  "temporary-break": { label: "Temporary break", tone: "warning" },
+  "temporary-break": { label: "On Temporary Break", tone: "warning" },
   inactive: { label: "Inactive", tone: "neutral" },
   "de-enrolled": { label: "De-enrolled", tone: "danger" },
 };
+
+const BREAK_MONTHS = 3;
+const DEFAULT_ENROLLMENT_FEE = 2000; // rupees
+
+function addMonths(iso: string, months: number): string {
+  const d = new Date(iso);
+  d.setMonth(d.getMonth() + months);
+  return d.toISOString();
+}
+
+function daysBetween(fromISO: string, toISO: string): number {
+  return Math.ceil((new Date(toISO).getTime() - new Date(fromISO).getTime()) / 86_400_000);
+}
+
+/** A break has lapsed when its resume-by date is in the past. */
+function isBreakLapsed(s: { status: StudentStatus; resumeBy?: string }): boolean {
+  return s.status === "temporary-break" && !!s.resumeBy && new Date(s.resumeBy).getTime() < Date.now();
+}
 
 interface Draft {
   firstName: string;
@@ -160,19 +178,113 @@ export function ManageStudents({
     );
   }
 
-  function changeStatus(next: StudentStatus, label: string) {
-    if (!current || current.status === next) return;
-    patchCurrent({ status: next }, [auditEvent(label)]);
-    setSavedMsg(label + ".");
+  function markInactive() {
+    if (!current || current.status === "inactive") return;
+    patchCurrent(
+      { status: "inactive", breakStartDate: undefined, resumeBy: undefined, subscriptionPaused: false },
+      [auditEvent("Marked inactive")],
+    );
+    setSavedMsg("Marked inactive.");
+  }
+
+  // Put a student on a temporary break: starts the 3-month clock, pauses the
+  // subscription and removes them from the batch WhatsApp group.
+  function startBreak() {
+    if (!current || current.status === "temporary-break") return;
+    const start = todayISO();
+    const resumeBy = addMonths(start, BREAK_MONTHS);
+    patchCurrent(
+      {
+        status: "temporary-break",
+        breakStartDate: start,
+        resumeBy,
+        subscriptionPaused: true,
+      },
+      [
+        auditEvent("Put on temporary break", `Maximum ${BREAK_MONTHS} months — resume by ${formatDate(resumeBy)}.`),
+        auditEvent("Subscription paused"),
+        auditEvent(`Removed from ${current.batchName} WhatsApp group`),
+      ],
+    );
+    setSavedMsg(`On temporary break — resume by ${formatDate(resumeBy)}.`);
+  }
+
+  // Resume / re-activate. Re-enrolling after a lapsed break (or from
+  // de-enrolled) triggers the one-time enrollment fee.
+  function resumeOrActivate() {
+    if (!current || current.status === "active") return;
+
+    const lapsed = isBreakLapsed(current);
+    const reEnrolling = current.status === "de-enrolled" || lapsed;
+
+    if (reEnrolling) {
+      const fee = current.enrollmentFee ?? DEFAULT_ENROLLMENT_FEE;
+      patchCurrent(
+        {
+          status: "active",
+          breakStartDate: undefined,
+          resumeBy: undefined,
+          subscriptionPaused: false,
+          feeApplicable: true,
+          enrollmentFee: fee,
+        },
+        [
+          auditEvent("Re-enrolled after break"),
+          auditEvent(`One-time enrollment fee applied (₹${fee})`),
+          auditEvent("Subscription resumed"),
+          auditEvent(`Re-added to ${current.batchName} WhatsApp group`),
+        ],
+      );
+      setSavedMsg(`Re-enrolled — one-time enrollment fee of ₹${fee} applies.`);
+      return;
+    }
+
+    if (current.status === "temporary-break") {
+      patchCurrent(
+        { status: "active", breakStartDate: undefined, resumeBy: undefined, subscriptionPaused: false },
+        [
+          auditEvent("Resumed from temporary break"),
+          auditEvent("Subscription resumed"),
+          auditEvent(`Re-added to ${current.batchName} WhatsApp group`),
+        ],
+      );
+      setSavedMsg("Resumed from break.");
+      return;
+    }
+
+    // from inactive
+    patchCurrent({ status: "active" }, [auditEvent("Marked active")]);
+    setSavedMsg("Marked active.");
+  }
+
+  // Admin confirms de-enrollment when a break has exceeded 3 months.
+  function confirmLapse() {
+    if (!current) return;
+    patchCurrent(
+      {
+        status: "de-enrolled",
+        subscriptionPaused: true,
+        feeApplicable: true,
+        enrollmentFee: current.enrollmentFee ?? DEFAULT_ENROLLMENT_FEE,
+      },
+      [auditEvent(`Break exceeded ${BREAK_MONTHS} months — de-enrolled`)],
+    );
+    setSavedMsg("Break lapsed — student de-enrolled.");
   }
 
   function deEnroll() {
     if (!current || current.status === "de-enrolled") return;
-    patchCurrent({ status: "de-enrolled" }, [
+    patchCurrent({ status: "de-enrolled", subscriptionPaused: true }, [
       auditEvent(`De-enrolled from ${current.batchName}`),
       auditEvent(`Removed from ${current.batchName} WhatsApp group`),
     ]);
     setSavedMsg(`${current.firstName} ${current.lastName} de-enrolled.`);
+  }
+
+  function setEnrollmentFee(value: number) {
+    setStudents((prev) =>
+      prev.map((s) => (s.mksmNo === selectedId ? { ...s, enrollmentFee: value } : s)),
+    );
   }
 
   function onSubmit(e: React.FormEvent) {
@@ -267,45 +379,98 @@ export function ManageStudents({
 
           {/* Status actions (edit only) */}
           {current ? (
-            <div className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-ink-50/40 p-3">
-              <span className="mr-1 text-sm font-medium text-ink-700">Status actions:</span>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() =>
-                  changeStatus(
-                    "active",
-                    current.status === "temporary-break" ? "Resumed from temporary break" : "Marked active",
-                  )
-                }
-                disabled={current.status === "active"}
-              >
-                <ArrowsClockwise size={15} /> Active
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => changeStatus("temporary-break", "Put on temporary break")}
-                disabled={current.status === "temporary-break"}
-              >
-                <PauseCircle size={15} /> Temporary break
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => changeStatus("inactive", "Marked inactive")}
-                disabled={current.status === "inactive"}
-              >
-                <Prohibit size={15} /> Inactive
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={deEnroll}
-                disabled={current.status === "de-enrolled"}
-              >
-                <UserMinus size={15} /> De-enroll
-              </Button>
+            <div className="space-y-3 rounded-lg border border-border bg-ink-50/40 p-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="mr-1 text-sm font-medium text-ink-700">Status actions:</span>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={resumeOrActivate}
+                  disabled={current.status === "active"}
+                >
+                  <ArrowsClockwise size={15} />{" "}
+                  {current.status === "temporary-break"
+                    ? "Resume from break"
+                    : current.status === "de-enrolled"
+                      ? `Re-enroll (₹${current.enrollmentFee ?? DEFAULT_ENROLLMENT_FEE} fee)`
+                      : "Mark active"}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={startBreak}
+                  disabled={current.status === "temporary-break" || current.status === "de-enrolled"}
+                >
+                  <PauseCircle size={15} /> On temporary break
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={markInactive}
+                  disabled={current.status === "inactive"}
+                >
+                  <Prohibit size={15} /> Inactive
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={deEnroll}
+                  disabled={current.status === "de-enrolled"}
+                >
+                  <UserMinus size={15} /> De-enroll
+                </Button>
+              </div>
+
+              {/* Active break panel */}
+              {current.status === "temporary-break" && current.breakStartDate && current.resumeBy ? (
+                isBreakLapsed(current) ? (
+                  <div className="space-y-2 rounded-md border border-warning-500 bg-warning-100 p-3">
+                    <p className="text-sm font-semibold text-warning-500">
+                      Break lapsed — exceeded {BREAK_MONTHS} months (resume-by was{" "}
+                      {formatDate(current.resumeBy)}).
+                    </p>
+                    <p className="text-xs text-ink-700">
+                      Per policy this is a de-enrollment. Re-enrolment later carries a one-time
+                      enrollment fee. Confirm to record the de-enrollment.
+                    </p>
+                    <Button size="sm" onClick={confirmLapse}>
+                      <UserMinus size={15} /> Confirm de-enrollment
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="rounded-md border border-warning-500 bg-warning-100 px-3 py-2 text-sm text-ink-700">
+                    On temporary break since{" "}
+                    <span className="font-medium">{formatDate(current.breakStartDate)}</span> · resume by{" "}
+                    <span className="font-medium">{formatDate(current.resumeBy)}</span> ·{" "}
+                    {Math.max(0, daysBetween(todayISO(), current.resumeBy))} days left. Subscription
+                    paused, removed from WhatsApp group.
+                  </div>
+                )
+              ) : null}
+
+              {/* Re-enrollment fee — only while de-enrolled (charged on re-enroll) */}
+              {current.status === "de-enrolled" ? (
+                <div className="flex flex-wrap items-end gap-3 rounded-md border border-border bg-surface p-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-ink-900">One-time re-enrollment fee</p>
+                    <p className="text-xs text-muted-foreground">
+                      Charged when this de-enrolled student re-enrolls. Adjust the amount before
+                      clicking Re-enroll.
+                    </p>
+                  </div>
+                  <div className="ml-auto flex items-center gap-1">
+                    <span className="text-sm text-ink-600">₹</span>
+                    <Input
+                      type="number"
+                      min={0}
+                      value={(current.enrollmentFee ?? DEFAULT_ENROLLMENT_FEE).toString()}
+                      onChange={(e) => setEnrollmentFee(Number(e.target.value))}
+                      className="w-28"
+                      aria-label="Enrollment fee amount"
+                    />
+                  </div>
+                </div>
+              ) : null}
             </div>
           ) : null}
 

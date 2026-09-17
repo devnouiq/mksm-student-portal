@@ -298,11 +298,16 @@ export const managedStudents: ManagedStudent[] = [
     batchName: "Dhun Batch",
     status: "temporary-break",
     joiningDate: inDays(-240),
+    breakStartDate: inDays(-100),
+    resumeBy: inDays(-10), // lapsed — over 3 months
+    subscriptionPaused: true,
     audit: [
       { id: "a-511-1", date: inDays(-240), label: "Joined MKSM" },
       { id: "a-511-2", date: inDays(-238), label: "Assigned to Dhun Batch" },
       { id: "a-511-3", date: inDays(-238), label: "Added to Dhun Batch WhatsApp group" },
-      { id: "a-511-4", date: inDays(-20), label: "Put on temporary break", note: "Exam season — back in a month." },
+      { id: "a-511-4", date: inDays(-100), label: "Put on temporary break", note: "Exam season." },
+      { id: "a-511-5", date: inDays(-100), label: "Subscription paused" },
+      { id: "a-511-6", date: inDays(-100), label: "Removed from Dhun Batch WhatsApp group" },
     ],
     attendance: makeAttendance("100511", "Dhun Batch", 14),
   },

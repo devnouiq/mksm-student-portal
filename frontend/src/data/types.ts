@@ -515,7 +515,8 @@ export interface ManagedStudent {
   pincode?: string;
   emergencyContactName?: string;
   emergencyContactPhone?: string;
-  batchName: string;
+  /** A student can belong to multiple batches (many-to-many). */
+  batchNames: string[];
   status: StudentStatus;
   joiningDate: string; // ISO — start date with MKSM
   info?: string;

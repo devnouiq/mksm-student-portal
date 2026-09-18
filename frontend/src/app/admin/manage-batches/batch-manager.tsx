@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Check, Plus } from "@phosphor-icons/react";
+import { useMemo, useState } from "react";
+import { Check, Plus, UserPlus, X } from "@phosphor-icons/react";
 import type { AdminBatch } from "@/data/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -100,20 +100,72 @@ function draftFromBatch(b: AdminBatch, fallbackTeacher: string): Draft {
   };
 }
 
+export interface RosterStudent {
+  mksmNo: string;
+  name: string;
+  batchNames: string[];
+}
+
 export function BatchManager({
   batches: initialBatches,
   teachers,
+  students: initialStudents,
 }: {
   batches: AdminBatch[];
   teachers: string[];
+  students: RosterStudent[];
 }) {
   const firstTeacher = teachers[0] ?? "";
   const [batches, setBatches] = useState(initialBatches);
+  const [roster, setRoster] = useState<RosterStudent[]>(initialStudents);
   const [selectedId, setSelectedId] = useState<string>(NEW);
   const [draft, setDraft] = useState<Draft>(emptyDraft(firstTeacher));
   const [savedMsg, setSavedMsg] = useState<string | null>(null);
+  const [rosterMsg, setRosterMsg] = useState<string | null>(null);
+  const [addPick, setAddPick] = useState<string>("");
 
   const editing = selectedId !== NEW;
+
+  // The selected batch's stored name (membership is keyed by batch name).
+  const selectedBatchName = editing
+    ? batches.find((b) => b.id === selectedId)?.name ?? ""
+    : "";
+
+  const enrolled = useMemo(
+    () => roster.filter((s) => s.batchNames.includes(selectedBatchName)),
+    [roster, selectedBatchName],
+  );
+  const available = useMemo(
+    () =>
+      roster
+        .filter((s) => !s.batchNames.includes(selectedBatchName))
+        .sort((a, b) => a.name.localeCompare(b.name)),
+    [roster, selectedBatchName],
+  );
+
+  function addStudent(mksmNo: string) {
+    if (!mksmNo || !selectedBatchName) return;
+    setRoster((prev) =>
+      prev.map((s) =>
+        s.mksmNo === mksmNo ? { ...s, batchNames: [...s.batchNames, selectedBatchName] } : s,
+      ),
+    );
+    const s = roster.find((x) => x.mksmNo === mksmNo);
+    setRosterMsg(`${s?.name ?? "Student"} added to ${selectedBatchName} — added to its WhatsApp group.`);
+    setAddPick("");
+  }
+
+  function removeStudent(mksmNo: string) {
+    setRoster((prev) =>
+      prev.map((s) =>
+        s.mksmNo === mksmNo
+          ? { ...s, batchNames: s.batchNames.filter((b) => b !== selectedBatchName) }
+          : s,
+      ),
+    );
+    const s = roster.find((x) => x.mksmNo === mksmNo);
+    setRosterMsg(`${s?.name ?? "Student"} removed from ${selectedBatchName} — removed from its WhatsApp group.`);
+  }
 
   function set<K extends keyof Draft>(key: K, value: Draft[K]) {
     setDraft((prev) => ({ ...prev, [key]: value }));
@@ -123,6 +175,8 @@ export function BatchManager({
   function choose(id: string) {
     setSelectedId(id);
     setSavedMsg(null);
+    setRosterMsg(null);
+    setAddPick("");
     if (id === NEW) {
       setDraft(emptyDraft(firstTeacher));
     } else {
@@ -177,6 +231,7 @@ export function BatchManager({
   }
 
   return (
+    <div className="space-y-6">
     <Card>
       <CardHeader>
         <CardTitle>{editing ? "Edit batch" : "New batch"}</CardTitle>
@@ -397,5 +452,71 @@ export function BatchManager({
         </form>
       </CardContent>
     </Card>
+
+    {/* Student roster — add / remove students for this batch (many-to-many) */}
+    {editing ? (
+      <Card>
+        <CardHeader>
+          <CardTitle>Students in {selectedBatchName}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {rosterMsg ? (
+            <div className="flex items-center gap-2 rounded-md border border-brand-200 bg-brand-50 px-3 py-2 text-sm font-medium text-brand-700">
+              <Check size={16} weight="bold" /> {rosterMsg}
+            </div>
+          ) : null}
+
+          {/* Add a student to this batch */}
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
+            <div className="flex-1">
+              <Field label="Add a student" htmlFor="b-add-student" hint="A student can belong to several batches.">
+                <Select id="b-add-student" value={addPick} onChange={(e) => setAddPick(e.target.value)}>
+                  <option value="">Select a student…</option>
+                  {available.map((s) => (
+                    <option key={s.mksmNo} value={s.mksmNo}>
+                      {s.name} — #{s.mksmNo}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+            </div>
+            <Button type="button" onClick={() => addStudent(addPick)} disabled={!addPick}>
+              <UserPlus size={16} /> Add to batch
+            </Button>
+          </div>
+
+          {/* Current roster */}
+          {enrolled.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No students in this batch yet.</p>
+          ) : (
+            <ul className="divide-y divide-border overflow-hidden rounded-lg border border-border">
+              {enrolled.map((s) => (
+                <li key={s.mksmNo} className="flex items-center gap-3 px-3 py-2.5">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-ink-900">{s.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      #{s.mksmNo}
+                      {s.batchNames.length > 1
+                        ? ` · also in ${s.batchNames.filter((b) => b !== selectedBatchName).join(", ")}`
+                        : ""}
+                    </p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeStudent(s.mksmNo)}
+                    aria-label={`Remove ${s.name}`}
+                  >
+                    <X size={15} /> Remove
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
+    ) : null}
+    </div>
   );
 }

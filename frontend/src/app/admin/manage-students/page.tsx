@@ -7,10 +7,7 @@ export const metadata: Metadata = { title: "Manage Students" };
 
 export default async function AdminManageStudentsPage() {
   const repos = getRepositories();
-  const [students, { batches }] = await Promise.all([
-    repos.admin.getManagedStudents(),
-    repos.admin.getFormOptions(),
-  ]);
+  const students = await repos.admin.getManagedStudents();
 
   return (
     <>
@@ -18,7 +15,7 @@ export default async function AdminManageStudentsPage() {
         title="Add / Manage Students"
         description="Pick a student from the dropdown to edit them, or add a new one. Same form for both — with status, audit trail and attendance."
       />
-      <ManageStudents students={students} batches={batches} />
+      <ManageStudents students={students} />
     </>
   );
 }

@@ -7,19 +7,26 @@ export const metadata: Metadata = { title: "Manage Batches" };
 
 export default async function AdminManageBatchesPage() {
   const repos = getRepositories();
-  const [{ teachers }, batches] = await Promise.all([
+  const [{ teachers }, batches, managed] = await Promise.all([
     repos.admin.getFormOptions(),
     repos.admin.getBatches(),
+    repos.admin.getManagedStudents(),
   ]);
+
+  const students = managed.map((s) => ({
+    mksmNo: s.mksmNo,
+    name: `${s.firstName} ${s.lastName}`,
+    batchNames: s.batchNames,
+  }));
 
   return (
     <>
       <PageHeader
         title="Add / Manage Batches"
-        description="Pick a batch from the dropdown to edit it, or create a new one. Same form for both."
+        description="Pick a batch to edit it, change its teacher, and add or remove students. Or create a new one."
       />
       <div className="max-w-3xl">
-        <BatchManager batches={batches} teachers={teachers} />
+        <BatchManager batches={batches} teachers={teachers} students={students} />
       </div>
     </>
   );

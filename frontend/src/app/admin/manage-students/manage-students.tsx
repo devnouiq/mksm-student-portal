@@ -68,7 +68,6 @@ interface Draft {
   pincode: string;
   emergencyContactName: string;
   emergencyContactPhone: string;
-  batchName: string;
   joiningDate: string;
   info: string;
 }
@@ -79,7 +78,7 @@ function todayISO() {
   return new Date().toISOString();
 }
 
-function emptyDraft(batch: string): Draft {
+function emptyDraft(): Draft {
   return {
     firstName: "",
     lastName: "",
@@ -94,7 +93,6 @@ function emptyDraft(batch: string): Draft {
     pincode: "",
     emergencyContactName: "",
     emergencyContactPhone: "",
-    batchName: batch,
     joiningDate: todayISO().slice(0, 10),
     info: "",
   };
@@ -115,10 +113,14 @@ function draftFrom(s: ManagedStudent): Draft {
     pincode: s.pincode ?? "",
     emergencyContactName: s.emergencyContactName ?? "",
     emergencyContactPhone: s.emergencyContactPhone ?? "",
-    batchName: s.batchName,
     joiningDate: s.joiningDate.slice(0, 10),
     info: s.info ?? "",
   };
+}
+
+/** WhatsApp add/remove audit events across every batch the student is in. */
+function whatsappEvents(batchNames: string[], action: "Removed from" | "Re-added to"): string[] {
+  return batchNames.map((b) => `${action} ${b} WhatsApp group`);
 }
 
 let auditSeq = 0;
@@ -127,16 +129,10 @@ function auditEvent(label: string, note?: string): StudentAuditEvent {
   return { id: `ae-${Date.now()}-${auditSeq}`, date: todayISO(), label, note };
 }
 
-export function ManageStudents({
-  students: initial,
-  batches,
-}: {
-  students: ManagedStudent[];
-  batches: string[];
-}) {
+export function ManageStudents({ students: initial }: { students: ManagedStudent[] }) {
   const [students, setStudents] = useState(initial);
   const [selectedId, setSelectedId] = useState<string>(NEW);
-  const [draft, setDraft] = useState<Draft>(emptyDraft(batches[0] ?? ""));
+  const [draft, setDraft] = useState<Draft>(emptyDraft());
   const [savedMsg, setSavedMsg] = useState<string | null>(null);
   const [createdCount, setCreatedCount] = useState(0);
 
@@ -160,7 +156,7 @@ export function ManageStudents({
     setSelectedId(id);
     setSavedMsg(null);
     if (id === NEW) {
-      setDraft(emptyDraft(batches[0] ?? ""));
+      setDraft(emptyDraft());
     } else {
       const s = students.find((x) => x.mksmNo === id);
       if (s) setDraft(draftFrom(s));
@@ -203,7 +199,7 @@ export function ManageStudents({
       [
         auditEvent("Put on temporary break", `Maximum ${BREAK_MONTHS} months — resume by ${formatDate(resumeBy)}.`),
         auditEvent("Subscription paused"),
-        auditEvent(`Removed from ${current.batchName} WhatsApp group`),
+        ...whatsappEvents(current.batchNames, "Removed from").map((l) => auditEvent(l)),
       ],
     );
     setSavedMsg(`On temporary break — resume by ${formatDate(resumeBy)}.`);
@@ -232,7 +228,7 @@ export function ManageStudents({
           auditEvent("Re-enrolled after break"),
           auditEvent(`One-time enrollment fee applied (₹${fee})`),
           auditEvent("Subscription resumed"),
-          auditEvent(`Re-added to ${current.batchName} WhatsApp group`),
+          ...whatsappEvents(current.batchNames, "Re-added to").map((l) => auditEvent(l)),
         ],
       );
       setSavedMsg(`Re-enrolled — one-time enrollment fee of ₹${fee} applies.`);
@@ -245,7 +241,7 @@ export function ManageStudents({
         [
           auditEvent("Resumed from temporary break"),
           auditEvent("Subscription resumed"),
-          auditEvent(`Re-added to ${current.batchName} WhatsApp group`),
+          ...whatsappEvents(current.batchNames, "Re-added to").map((l) => auditEvent(l)),
         ],
       );
       setSavedMsg("Resumed from break.");
@@ -274,9 +270,10 @@ export function ManageStudents({
 
   function deEnroll() {
     if (!current || current.status === "de-enrolled") return;
+    const from = current.batchNames.length ? current.batchNames.join(", ") : "MKSM";
     patchCurrent({ status: "de-enrolled", subscriptionPaused: true }, [
-      auditEvent(`De-enrolled from ${current.batchName}`),
-      auditEvent(`Removed from ${current.batchName} WhatsApp group`),
+      auditEvent(`De-enrolled from ${from}`),
+      ...whatsappEvents(current.batchNames, "Removed from").map((l) => auditEvent(l)),
     ]);
     setSavedMsg(`${current.firstName} ${current.lastName} de-enrolled.`);
   }
@@ -310,44 +307,26 @@ export function ManageStudents({
     };
 
     if (editing && current) {
-      const batchChanged = draft.batchName !== current.batchName;
-      const events: StudentAuditEvent[] = batchChanged
-        ? [
-            auditEvent(`Moved to ${draft.batchName}`),
-            auditEvent(`Removed from ${current.batchName} WhatsApp group`),
-            auditEvent(`Added to ${draft.batchName} WhatsApp group`),
-          ]
-        : [];
-      patchCurrent({ ...profile, batchName: draft.batchName }, events);
-      setSavedMsg(
-        batchChanged
-          ? `Saved. Moved to ${draft.batchName} — WhatsApp groups updated.`
-          : "Saved.",
-      );
+      // Batch membership is managed from the batch roster, not here.
+      patchCurrent(profile, []);
+      setSavedMsg("Saved.");
     } else {
       const mksmNo = String(100700 + createdCount);
       const created: ManagedStudent = {
         mksmNo,
         ...profile,
-        batchName: draft.batchName,
+        batchNames: [],
         status: "active",
         joiningDate: draft.joiningDate ? new Date(draft.joiningDate).toISOString() : todayISO(),
-        audit: [
-          auditEvent("Joined MKSM"),
-          auditEvent(`Assigned to ${draft.batchName}`),
-          auditEvent(`Added to ${draft.batchName} WhatsApp group`),
-        ],
+        audit: [auditEvent("Joined MKSM")],
         attendance: [],
       };
       setStudents((prev) => [...prev, created]);
       setCreatedCount((n) => n + 1);
       setSelectedId(mksmNo);
-      setSavedMsg(`Student created — MKSM #${mksmNo}.`);
+      setSavedMsg(`Student created — MKSM #${mksmNo}. Assign to a batch on Manage Batches.`);
     }
   }
-
-  const batchChangedNow =
-    editing && current !== null && draft.batchName !== current.batchName;
 
   return (
     <div className="space-y-6">
@@ -537,23 +516,31 @@ export function ManageStudents({
               </Field>
             </div>
 
-            <Field
-              label="Assign batch"
-              htmlFor="s-batch"
-              hint={
-                batchChangedNow
-                  ? `On save: remove from ${current!.batchName} WhatsApp group, add to ${draft.batchName} WhatsApp group.`
-                  : "Changing the batch updates the student's WhatsApp group on save."
-              }
-            >
-              <Select id="s-batch" value={draft.batchName} onChange={(e) => set("batchName", e.target.value)}>
-                {batches.map((b) => (
-                  <option key={b} value={b}>
-                    {b}
-                  </option>
-                ))}
-              </Select>
-            </Field>
+            {/* Batches are read-only here — add/remove on Manage Batches. */}
+            {current ? (
+              <Field
+                label="Batches"
+                htmlFor="s-batches"
+                hint="A student can be in several batches. Add or remove them on the Manage Batches screen."
+              >
+                <div id="s-batches" className="flex flex-wrap gap-2">
+                  {current.batchNames.length ? (
+                    current.batchNames.map((b) => (
+                      <span
+                        key={b}
+                        className="inline-flex items-center gap-1 rounded-full border border-border bg-ink-50 px-3 py-1 text-sm text-ink-700"
+                      >
+                        {b}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-sm text-muted-foreground">
+                      No batch assigned — add on Manage Batches.
+                    </span>
+                  )}
+                </div>
+              </Field>
+            ) : null}
 
             <Field label="Additional info" htmlFor="s-info" hint="Optional.">
               <Textarea id="s-info" rows={2} value={draft.info} onChange={(e) => set("info", e.target.value)} />

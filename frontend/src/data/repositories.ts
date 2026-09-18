@@ -29,6 +29,7 @@ import type {
   ScheduleEntry,
   StudentCoursesView,
   ManagedStudent,
+  ManagedTeacher,
   StudentDirectoryRow,
   StudentHomeworkView,
   StudentOverview,
@@ -76,6 +77,8 @@ export interface AdminRepository {
   getStudents(): Promise<StudentDirectoryRow[]>;
   /** Full managed-student records for add / edit student (PRD §5.3). */
   getManagedStudents(): Promise<ManagedStudent[]>;
+  /** Full managed-teacher records for add / edit teacher (PRD §5.3). */
+  getManagedTeachers(): Promise<ManagedTeacher[]>;
   getPracticeLibrary(): Promise<PracticeMaterialView>;
   getClassLogs(): Promise<ClassLogEntry[]>;
   getSubscriptions(): Promise<SubscriptionRow[]>;

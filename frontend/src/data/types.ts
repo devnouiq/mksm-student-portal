@@ -451,6 +451,9 @@ export interface AdminBatch {
   day: string;
   time: string;
   zoomLink: string;
+  /** Internal primary id, generated on create (e.g. "B000001"). The batch
+      name stays the human-readable handle; this is the stable key. */
+  batchId?: string;
   /** Primary time zone the batch time is expressed in (e.g. "IST"). */
   timeZone?: string;
   /** Countries whose students may be assigned to this batch. */
@@ -492,6 +495,9 @@ export interface StudentAuditEvent {
   note?: string;
 }
 
+/** A timeline event on any managed record (student or teacher). */
+export type AuditEvent = StudentAuditEvent;
+
 export interface StudentAttendanceRow {
   id: string;
   date: string; // ISO
@@ -529,6 +535,43 @@ export interface ManagedStudent {
   enrollmentFee?: number; // rupees
   audit: StudentAuditEvent[];
   attendance: StudentAttendanceRow[];
+}
+
+/* ------------------------------------------------------------------ *
+ * Managed teacher — the add / edit teacher record. Mirrors the managed
+ * student shape so all three core objects (student / batch / teacher)
+ * share one add-and-edit pattern. `teacherId` (T######) is the primary id.
+ * ------------------------------------------------------------------ */
+
+export type TeacherStatus = "active" | "inactive";
+
+export interface ManagedTeacher {
+  /** Internal primary id, generated on create (e.g. "T000001"). */
+  teacherId: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+  dob?: string; // ISO
+  gender: string;
+  /** Years of teaching experience. */
+  experienceYears?: number;
+  /** Focus areas, e.g. "Khayal, Bhajan". */
+  specialization?: string;
+  /** Languages the teacher instructs in, e.g. "Hindi, Marathi". */
+  languages?: string;
+  /** Portal permission tier (display only in the prototype). */
+  accessLevel: string;
+  address?: string;
+  city?: string;
+  country: string;
+  pincode?: string;
+  status: TeacherStatus;
+  joiningDate: string; // ISO — start date with MKSM
+  info?: string;
+  /** Batches this teacher runs — read-only here, set on the Assignments screen. */
+  batchNames: string[];
+  audit: AuditEvent[];
 }
 
 export interface SubscriptionRow {

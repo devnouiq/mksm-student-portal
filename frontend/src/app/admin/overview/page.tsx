@@ -106,7 +106,7 @@ export default async function AdminOverviewPage() {
             <CardHeader>
               <CardTitle>Batch management</CardTitle>
               <Link
-                href="/admin/batches"
+                href="/admin/manage-batches"
                 className="inline-flex items-center gap-1 text-sm font-medium text-brand-700 hover:underline"
               >
                 Manage batches <ArrowRight size={15} />

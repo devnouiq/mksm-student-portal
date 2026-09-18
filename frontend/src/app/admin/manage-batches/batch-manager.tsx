@@ -126,10 +126,9 @@ export function BatchManager({
 
   const editing = selectedId !== NEW;
 
+  const selectedBatch = editing ? batches.find((b) => b.id === selectedId) : undefined;
   // The selected batch's stored name (membership is keyed by batch name).
-  const selectedBatchName = editing
-    ? batches.find((b) => b.id === selectedId)?.name ?? ""
-    : "";
+  const selectedBatchName = selectedBatch?.name ?? "";
 
   const enrolled = useMemo(
     () => roster.filter((s) => s.batchNames.includes(selectedBatchName)),
@@ -216,8 +215,15 @@ export function BatchManager({
       setSavedMsg(`“${draft.name.trim()}” updated.`);
     } else {
       const id = `b-${Date.now()}`;
+      const nextNum =
+        batches.reduce(
+          (max, b) => Math.max(max, b.batchId ? Number(b.batchId.replace(/\D/g, "")) : 0),
+          0,
+        ) + 1;
+      const batchId = `B${String(nextNum).padStart(6, "0")}`;
       const created: AdminBatch = {
         id,
+        batchId,
         studentCount: 0,
         ...draft,
         name: draft.name.trim(),
@@ -226,7 +232,7 @@ export function BatchManager({
       };
       setBatches((prev) => [...prev, created]);
       setSelectedId(id);
-      setSavedMsg(`“${draft.name.trim()}” created.`);
+      setSavedMsg(`“${draft.name.trim()}” created — primary ID ${batchId}.`);
     }
   }
 
@@ -234,7 +240,14 @@ export function BatchManager({
     <div className="space-y-6">
     <Card>
       <CardHeader>
-        <CardTitle>{editing ? "Edit batch" : "New batch"}</CardTitle>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <CardTitle>{editing ? "Edit batch" : "New batch"}</CardTitle>
+          {selectedBatch?.batchId ? (
+            <span className="rounded-full border border-border bg-ink-50 px-2.5 py-1 font-mono text-xs text-ink-700">
+              {selectedBatch.batchId} · primary ID
+            </span>
+          ) : null}
+        </div>
       </CardHeader>
       <CardContent className="space-y-5">
         {/* Batch selector — create new or edit an existing one */}

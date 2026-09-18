@@ -2,21 +2,40 @@ import type { Metadata } from "next";
 import { Plus } from "@phosphor-icons/react/dist/ssr";
 import { getRepositories } from "@/data";
 import { PageHeader } from "@/components/layout/page-header";
-import { Badge } from "@/components/ui/badge";
-import { Button, ButtonLink } from "@/components/ui/button";
-import { Table, TableWrap, TH, THead, TR, TD } from "@/components/ui/table";
+import { ButtonLink } from "@/components/ui/button";
+import { AssignmentsManager } from "./assignments-manager";
 import { BatchAttendance, type BatchAttendanceRow } from "./batch-attendance";
 
-export const metadata: Metadata = { title: "Classes / Batches" };
+export const metadata: Metadata = { title: "Assignments" };
 
-export default async function AdminBatchesPage() {
+export default async function AdminAssignmentsPage() {
   const repos = getRepositories();
-  const [batches, managed] = await Promise.all([
+  const [batches, managed, teachers] = await Promise.all([
     repos.admin.getBatches(),
     repos.admin.getManagedStudents(),
+    repos.admin.getManagedTeachers(),
   ]);
 
-  // Same attendance data as the student view, grouped by batch.
+  const assignBatches = batches.map((b) => ({
+    id: b.id,
+    batchId: b.batchId,
+    name: b.name,
+    teacherName: b.teacherName,
+    day: b.day,
+    time: b.time,
+  }));
+
+  const assignTeachers = teachers
+    .filter((t) => t.status === "active")
+    .map((t) => ({ teacherId: t.teacherId, name: `${t.firstName} ${t.lastName}` }));
+
+  const assignStudents = managed.map((s) => ({
+    mksmNo: s.mksmNo,
+    name: `${s.firstName} ${s.lastName}`,
+    batchNames: s.batchNames,
+  }));
+
+  // Attendance grouped by batch, same data as the student view.
   const rowsByBatch: Record<string, BatchAttendanceRow[]> = {};
   for (const s of managed) {
     for (const a of s.attendance) {
@@ -33,8 +52,8 @@ export default async function AdminBatchesPage() {
   return (
     <>
       <PageHeader
-        title="Manage Classes / Batches"
-        description="All batches with their teacher, students and static Zoom link."
+        title="Assignments"
+        description="Pick a batch to assign its teacher and its students. Create or edit batches themselves on Manage Batches."
         actions={
           <ButtonLink href="/admin/manage-batches" size="sm">
             <Plus size={16} /> Create new batch
@@ -42,49 +61,11 @@ export default async function AdminBatchesPage() {
         }
       />
 
-      <TableWrap>
-        <Table>
-          <THead>
-            <TR>
-              <TH>Batch</TH>
-              <TH>Teacher</TH>
-              <TH>Schedule</TH>
-              <TH>Level / Language</TH>
-              <TH>Students</TH>
-              <TH className="text-right">Actions</TH>
-            </TR>
-          </THead>
-          <tbody>
-            {batches.map((b) => (
-              <TR key={b.id}>
-                <TD className="font-medium text-ink-900">{b.name}</TD>
-                <TD className="whitespace-nowrap text-muted-foreground">{b.teacherName}</TD>
-                <TD className="whitespace-nowrap text-muted-foreground">
-                  {b.day}, {b.time}
-                </TD>
-                <TD className="whitespace-nowrap">
-                  <Badge tone="neutral">{b.level}</Badge>{" "}
-                  <Badge tone="info">{b.language}</Badge>
-                </TD>
-                <TD>{b.studentCount}</TD>
-                <TD>
-                  <div className="flex justify-end gap-2">
-                    <Button variant="outline" size="sm">
-                      Students
-                    </Button>
-                    <ButtonLink href={b.zoomLink} variant="ghost" size="sm">
-                      Zoom
-                    </ButtonLink>
-                    <Button variant="ghost" size="sm">
-                      Change teacher
-                    </Button>
-                  </div>
-                </TD>
-              </TR>
-            ))}
-          </tbody>
-        </Table>
-      </TableWrap>
+      <AssignmentsManager
+        batches={assignBatches}
+        teachers={assignTeachers}
+        students={assignStudents}
+      />
 
       <div className="mt-8">
         <BatchAttendance batches={batches.map((b) => b.name)} rowsByBatch={rowsByBatch} />

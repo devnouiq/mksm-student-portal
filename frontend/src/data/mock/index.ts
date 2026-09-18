@@ -50,6 +50,7 @@ import {
   adminMasterLibrary,
   deEnrollments,
   managedStudents,
+  managedTeachers,
   providerBreakdowns,
   studentDirectory,
   subscriptionRows,
@@ -201,6 +202,9 @@ const adminRepository: AdminRepository = {
   },
   getManagedStudents() {
     return settle(managedStudents);
+  },
+  getManagedTeachers() {
+    return settle(managedTeachers);
   },
   getPracticeLibrary() {
     return settle({ adminShared: adminMasterLibrary, own: [] });

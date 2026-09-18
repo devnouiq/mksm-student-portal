@@ -336,7 +336,9 @@ export function ManageStudents({ students: initial }: { students: ManagedStudent
             <CardTitle>{editing ? "Edit student" : "Add new student"}</CardTitle>
             {current ? (
               <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">MKSM #{current.mksmNo}</span>
+                <span className="rounded-full border border-border bg-ink-50 px-2.5 py-1 font-mono text-xs text-ink-700">
+                  MKSM {current.mksmNo} · primary ID
+                </span>
                 <Badge tone={STATUS_META[current.status].tone}>
                   {STATUS_META[current.status].label}
                 </Badge>

@@ -67,7 +67,7 @@ const teacher: NavItem[] = [
 
 const admin: NavItem[] = [
   { label: "Overview", href: "/admin/overview", icon: House },
-  { label: "Classes / Batches", href: "/admin/batches", icon: ChalkboardTeacher },
+  { label: "Assignments", href: "/admin/batches", icon: ClipboardText },
   { label: "Active Students", href: "/admin/students", icon: UsersThree },
   { label: "Practice Material", href: "/admin/practice", icon: MusicNotes },
   { label: "Class Log", href: "/admin/class-log", icon: Notebook },
@@ -75,6 +75,7 @@ const admin: NavItem[] = [
   { label: "Add Student", href: "/admin/add-student", icon: UserPlus },
   { label: "Add Teacher", href: "/admin/add-teacher", icon: IdentificationCard },
   { label: "Manage Batches", href: "/admin/manage-batches", icon: Books },
+  { label: "Manage Teachers", href: "/admin/manage-teachers", icon: ChalkboardTeacher },
   { label: "Subscriptions", href: "/admin/subscriptions", icon: ChartLineUp },
   { label: "De-enrollment", href: "/admin/de-enrollment", icon: UserMinus },
   { label: "WhatsApp", href: "/admin/whatsapp", icon: WhatsappLogo },
